@@ -1,0 +1,1340 @@
+<!doctype html>
+<html lang="en-AU">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Crime Script and SCP</title>
+<meta name="description" content="3026CCJ Fraud and Cybercrime: an educational choose-your-own-adventure on crime scripts, Cyber Routine Activity Theory and situational crime prevention, using a fictional composite sextortion case.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=Lexend:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  color-scheme: light;
+  --bg:#f7f3fb; --ink:#22213f; --muted:#4d4b6b; --card:#ffffff; --line:#e3dcef;
+  --accent:#c2364f; --accent-soft:#fde3ea; --accent-ink:#ffffff;
+  --lav:#ece6fd; --mint:#daf4ec; --peach:#ffe8da; --sky:#dceefd; --butter:#fff3cf; --rose:#fde3ea;
+  --lav-d:#5a4bb0; --mint-d:#1d6a55; --sky-d:#1c5889; --rose-d:#9b2645;
+  --focus:#1d4ed8;
+  --radius:20px;
+  --shadow:0 1px 0 rgba(34,33,63,.05), 0 10px 30px rgba(90,75,176,.09);
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{
+  background:radial-gradient(1200px 600px at 100% 0%, #fde7ef 0%, transparent 60%), radial-gradient(900px 600px at 0% 100%, #e3f3fb 0%, transparent 60%), var(--bg);
+  color:var(--ink);
+  font-family:"Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size:20px; line-height:1.45;
+  display:flex; flex-direction:column; height:100dvh; min-height:100vh;
+}
+h1,h2,h3{font-family:Lexend, "Atkinson Hyperlegible", sans-serif; line-height:1.15; margin:0 0 .4em; letter-spacing:-.01em}
+h1{font-size:44px} h2{font-size:34px} h3{font-size:24px}
+p{margin:0 0 .7em}
+a{color:inherit}
+button{font:inherit; color:inherit; cursor:pointer}
+:focus-visible{outline:3px solid var(--focus); outline-offset:3px; border-radius:8px}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* top bar */
+.top{display:flex; align-items:center; gap:16px; padding:10px 20px; border-bottom:1px solid var(--line); background:rgba(255,255,255,.85); backdrop-filter:blur(8px)}
+.brand{font-family:Lexend; font-weight:700; font-size:20px; white-space:nowrap}
+.brand span{color:var(--accent)}
+.actlabel{font-size:18px; color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.progress{flex:1; height:8px; background:var(--line); border-radius:99px; overflow:hidden; min-width:60px}
+.progress > i{display:block; height:100%; width:0; background:linear-gradient(90deg,#ad9ce8,var(--accent)); transition:width .4s}
+.toggle{display:flex; align-items:center; gap:8px; border:2px solid var(--ink); background:#fff; border-radius:99px; padding:4px 14px 4px 6px; font-size:18px; font-weight:700}
+.toggle .knob{width:34px; height:20px; border-radius:99px; background:var(--line); position:relative; transition:background .2s}
+.toggle .knob::after{content:""; position:absolute; top:2px; left:2px; width:16px; height:16px; border-radius:50%; background:#fff; box-shadow:0 1px 2px rgba(0,0,0,.3); transition:left .2s}
+.toggle[aria-pressed="true"]{background:var(--ink); color:#fff}
+.toggle[aria-pressed="true"] .knob{background:var(--accent)}
+.toggle[aria-pressed="true"] .knob::after{left:16px}
+.toggle .state{font-weight:400}
+.iconbtn{border:2px solid var(--line); background:#fff; border-radius:99px; padding:4px 14px; font-size:18px}
+
+/* stage */
+main#stage{flex:1; overflow:auto; position:relative}
+.scene{max-width:1200px; margin:0 auto; padding:16px 28px 20px; animation:enter .4s ease both}
+@keyframes enter{from{opacity:0; transform:translateY(10px)} to{opacity:1; transform:none}}
+.split{display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1.05fr); gap:32px; align-items:center}
+.split.rev{grid-template-columns:minmax(0,1.05fr) minmax(0,1fr)}
+.art{border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden; background:#fff}
+.art > svg{display:block; width:100%; height:auto}
+.lead{font-size:23px}
+.muted{color:var(--muted)}
+.small{font-size:18px}
+
+/* tags */
+.tags{display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px}
+.tag{display:inline-flex; align-items:center; gap:6px; font-size:16px; font-weight:700; padding:3px 12px; border-radius:99px; border:2px solid transparent}
+.tag.fiction{background:var(--lav); color:var(--lav-d)}
+.tag.fiction::before{content:"✎"}
+.tag.data{background:var(--sky); color:var(--sky-d)}
+.tag.data::before{content:"▤"}
+.tag.concept{background:var(--mint); color:var(--mint-d)}
+.tag.concept::before{content:"◆"}
+.tag.stage{background:#fff; border-color:var(--accent); color:var(--accent)}
+.tag.warn{background:#fff3cf; color:#7a4b00}
+.tag.warn::before{content:"❗"}
+.tag.stage::before{content:"▸"}
+
+/* cards */
+.card{background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); padding:22px 24px}
+.datacard{background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); padding:26px 30px; border-top:10px solid #b0d4f3}
+.stat{font-family:Lexend; font-weight:700; font-size:52px; line-height:1.05; color:var(--ink); margin:4px 0 14px}
+.stat em{font-style:normal; color:var(--accent)}
+.stat2{display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:6px}
+.stat2 .stat{font-size:46px; margin-bottom:6px}
+.cite{font-size:13px; color:var(--muted); margin-top:16px; border-top:1px solid var(--line); padding-top:10px; line-height:1.45}
+.cite b{color:var(--ink)}
+.cite p{margin:0 0 4px}
+.minidata{background:#fff; border-radius:16px; box-shadow:var(--shadow); padding:14px 18px; border-left:8px solid #b0d4f3; margin-top:10px}
+.minidata .stat{font-size:30px; margin:4px 0 6px}
+.minidata p{font-size:18px; margin:0 0 4px}
+.minidata .cite{margin-top:8px; padding-top:6px; font-size:12px}
+.dn{background:#fff3b0; border:2px dashed #b45309; color:#7c2d12; padding:0 6px; border-radius:6px; font-weight:700; font-size:.9em}
+.rankrow{display:flex; flex-wrap:wrap; gap:10px; margin:6px 0 14px; padding:0; list-style:none}
+.rankrow li{background:var(--sky); border-radius:12px; padding:8px 14px; font-weight:700}
+.rankrow li b{color:var(--sky-d); margin-right:6px}
+.rankrow li.hl{background:var(--accent); color:#fff}
+.rankrow li.hl b{color:#fff}
+
+/* buttons */
+.btn{display:inline-flex; align-items:center; justify-content:center; gap:10px; border:none; border-radius:14px; padding:14px 24px; font-weight:700; font-size:20px; background:var(--accent); color:var(--accent-ink); min-height:52px}
+.btn.ghost{background:#fff; color:var(--ink); border:2px solid var(--ink)}
+.btn.soft{background:var(--accent-soft); color:var(--accent)}
+.btn:disabled{opacity:.4; cursor:not-allowed}
+.btnrow{display:flex; flex-wrap:wrap; gap:14px; margin-top:18px; align-items:center}
+
+/* choices */
+.choices{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin-top:12px}
+.choice{text-align:left; background:#fff; border:2px solid var(--line); border-radius:16px; padding:14px 18px; box-shadow:var(--shadow); transition:border-color .2s}
+.choice:hover{border-color:var(--accent)}
+.choice .q{font-family:Lexend; font-weight:600; font-size:22px; display:flex; justify-content:space-between; gap:10px}
+.choice .q::after{content:"＋"; color:var(--accent)}
+.choice[aria-expanded="true"]{border-color:var(--accent); background:#fffafc}
+.choice[aria-expanded="true"] .q::after{content:"✓"}
+.choice .a{display:none; margin-top:8px; font-size:20px}
+.choice[aria-expanded="true"] .a{display:block}
+.note{background:var(--butter); border-radius:14px; padding:12px 16px; margin-top:14px; font-size:20px}
+
+/* phone */
+.phone{width:min(320px,100%); margin:0 auto; background:#2d2a5a; border-radius:36px; padding:12px; box-shadow:var(--shadow)}
+.screen{background:linear-gradient(180deg,#f6f2fd,#fdf1f5); border-radius:26px; height:360px; overflow:hidden; display:flex; flex-direction:column}
+.appbar{background:#fff; padding:12px 14px; display:flex; align-items:center; gap:10px; border-bottom:1px solid var(--line); font-size:17px; font-weight:700}
+.appbar .av{width:32px; height:32px; border-radius:50%; background:var(--rose); flex:none; display:grid; place-items:center; font-size:14px}
+.appbar small{display:block; font-weight:400; color:var(--muted); font-size:14px}
+.msgs{flex:1; padding:12px; display:flex; flex-direction:column; gap:8px; overflow:hidden; justify-content:flex-end}
+.b{max-width:82%; padding:9px 13px; border-radius:18px; font-size:17px; line-height:1.3; animation:pop .4s ease both}
+.b.in{background:#fff; align-self:flex-start; border-bottom-left-radius:6px}
+.b.out{background:var(--lav-d); color:#fff; align-self:flex-end; border-bottom-right-radius:6px}
+.b.sys{align-self:center; background:transparent; color:var(--muted); font-size:14px; padding:2px}
+.b.threat{background:#fff; border:2px solid var(--rose-d); color:var(--ink)}
+@keyframes pop{from{opacity:0; transform:translateY(6px) scale(.98)} to{opacity:1; transform:none}}
+.imgblur{width:150px; height:100px; border-radius:14px; position:relative; overflow:hidden; display:grid; place-items:center; font-size:14px; font-weight:700; text-align:center; padding:8px}
+.imgblur::before{content:""; position:absolute; inset:-20px; background:radial-gradient(circle at 30% 40%, #f7c6d0, transparent 55%), radial-gradient(circle at 70% 60%, #c9c2f2, transparent 55%), #e9e4f5; filter:blur(10px)}
+.imgblur span{position:relative; background:rgba(255,255,255,.88); color:var(--ink); padding:4px 8px; border-radius:8px}
+.followers{background:#fff; border-radius:12px; padding:8px 10px; font-size:13px; width:190px}
+.followers .fh{font-weight:700; margin-bottom:4px}
+.followers .fr{display:flex; align-items:center; gap:6px; margin:4px 0}
+.followers .fr i{width:16px; height:16px; border-radius:50%; background:var(--sky); flex:none}
+.followers .fr s{height:8px; border-radius:4px; background:#d6d2e4; flex:1; text-decoration:none}
+.followers .fr em{font-style:normal; font-size:11px; color:var(--muted)}
+.profilecard{background:#fff; margin:14px; border-radius:16px; padding:16px; text-align:center}
+.profilecard .big{width:84px; height:84px; border-radius:50%; margin:0 auto 8px; overflow:hidden}
+.profilecard .big svg{display:block; width:100%; height:100%}
+.profilecard .nm{font-weight:700; font-size:19px}
+.profilecard .meta{font-size:15px; color:var(--muted)}
+.profilecard .stats{display:flex; justify-content:center; gap:18px; margin:10px 0; font-size:15px}
+.pill{display:inline-block; background:var(--lav-d); color:#fff; border-radius:10px; padding:6px 14px; font-size:15px; font-weight:700}
+
+/* offender script doc */
+.scriptdoc{background:#fffdf6; border:2px solid #ebe1c5; border-radius:14px; padding:12px 18px; box-shadow:var(--shadow); font-size:19px}
+.scriptdoc h3{font-size:20px; display:flex; justify-content:space-between; gap:8px; border-bottom:2px dashed #ebe1c5; padding-bottom:8px}
+.scriptdoc h3 small{font-family:"Atkinson Hyperlegible"; font-weight:400; color:var(--muted); font-size:15px}
+.scriptdoc ol{list-style:none; margin:0; padding:0}
+.scriptdoc li{display:flex; gap:10px; padding:1px 0; align-items:flex-start}
+.scriptdoc li .bx{flex:none; width:24px; height:24px; border:2px solid var(--ink); border-radius:6px; display:grid; place-items:center; font-size:16px; font-weight:700; margin-top:2px}
+.scriptdoc li.done{color:var(--muted)}
+.scriptdoc li.done .bx{background:var(--ink); color:#fff}
+.scriptdoc li.now{font-weight:700; color:var(--ink)}
+.scriptdoc li.now .bx{background:var(--accent); border-color:var(--accent); color:#fff; animation:tick .5s ease}
+.scriptdoc li.fail .lbl{text-decoration:line-through}
+.scriptdoc li .lbl{flex:1}
+@keyframes tick{from{transform:scale(.6)} to{transform:scale(1)}}
+.act3grid{display:grid; grid-template-columns:320px minmax(0,1fr); gap:30px; align-items:start}
+.narr{font-size:22px}
+
+.autobar{height:6px; background:var(--line); border-radius:99px; overflow:hidden; margin-bottom:12px}
+.autobar i{display:block; height:100%; width:0; background:var(--ink)}
+.autobar.run i{animation:fill linear forwards}
+.autobar.paused i{animation-play-state:paused}
+@keyframes fill{from{width:0} to{width:100%}}
+
+/* SCP page */
+.scpgrid{display:grid; grid-template-columns:repeat(5,minmax(0,1fr)); gap:12px; margin-top:4px}
+.scp{background:#fff; border-radius:18px; box-shadow:var(--shadow); padding:0 0 10px; overflow:hidden; display:flex; flex-direction:column}
+.scp svg{display:block; width:100%; height:78px; background:linear-gradient(180deg,#efe9fd,#fdeef3)}
+.scp h3{font-size:19px; margin:10px 14px 4px}
+.scp p{font-size:17px; margin:0 14px 6px; line-height:1.3}
+.scp .eg{font-size:15px; color:var(--muted); margin-top:auto}
+.scp .eg b{color:var(--ink)}
+
+/* timeline */
+.tl-wrap{overflow-x:auto; padding:8px 4px 12px; margin:0 -4px}
+.tl{display:grid; grid-template-columns:repeat(9, minmax(108px,1fr)); gap:8px; position:relative; min-width:980px}
+.tl::before{content:""; position:absolute; left:4%; right:4%; top:25px; height:4px; background:var(--line); border-radius:4px}
+.tl button{position:relative; background:transparent; border:none; padding:0 4px 6px; display:flex; flex-direction:column; align-items:center; gap:6px; text-align:center; border-radius:12px}
+.tl .dot{width:50px; height:50px; border-radius:50%; background:#fff; border:3px solid var(--ink); display:grid; place-items:center; font-family:Lexend; font-weight:700; font-size:22px; transition:transform .2s, background .2s}
+.tl .nm{font-size:16px; font-weight:700; line-height:1.15}
+.tl .seen{font-size:13px; color:var(--mint-d); font-weight:700; min-height:16px}
+.tl button[aria-pressed="true"] .dot{background:var(--accent); color:#fff; border-color:var(--accent); transform:scale(1.08)}
+.tl button.dim{opacity:.35}
+.lens{display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:4px 0 10px; font-size:18px}
+.lens button{border:2px solid var(--ink); background:#fff; border-radius:99px; padding:3px 12px; font-size:17px; font-weight:700}
+.lens button[aria-pressed="true"]{background:var(--ink); color:#fff}
+.panel{background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); padding:20px 22px; margin-top:6px}
+.panel .happens{font-size:21px; margin-bottom:12px; padding-left:14px; border-left:5px solid var(--lav-d)}
+.ints{display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:14px}
+.int{border:2px solid var(--line); border-radius:16px; padding:14px 16px; display:flex; flex-direction:column; gap:10px}
+.int.dim{opacity:.35}
+.int p{margin:0; font-size:20px}
+.badges{display:flex; flex-wrap:wrap; gap:6px}
+.bdg{font-size:15px; font-weight:700; border-radius:8px; padding:3px 9px; display:inline-flex; gap:5px; align-items:center}
+.bdg.actor{background:var(--ink); color:#fff}
+.bdg.scp{background:var(--butter); color:#6b4e00; border:1.5px solid #dcc47a}
+.explored{font-size:18px; color:var(--muted); margin-left:auto}
+.kbdhint{font-size:16px; color:var(--muted)}
+kbd{font-family:inherit; border:1.5px solid var(--muted); border-bottom-width:3px; border-radius:6px; padding:0 6px; font-size:.9em; background:#fff; color:var(--ink)}
+
+/* vote */
+.vote{display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:14px; margin-top:14px}
+.vopt{display:flex; gap:14px; align-items:flex-start; text-align:left; background:#fff; border:2px solid var(--line); border-radius:16px; padding:14px 16px; box-shadow:var(--shadow)}
+.vopt .L{flex:none; width:46px; height:46px; border-radius:12px; background:var(--ink); color:#fff; display:grid; place-items:center; font-family:Lexend; font-weight:700; font-size:24px}
+.vopt small{display:block; color:var(--muted); font-size:16px; margin-top:4px}
+.vopt[aria-pressed="true"]{border-color:var(--accent); background:#fffafc}
+.vopt[aria-pressed="true"] .L{background:var(--accent)}
+
+/* alt ending */
+.steps{list-style:none; padding:0; margin:0; display:flex; flex-direction:column; gap:6px}
+.steps li{display:flex; gap:12px; align-items:center; background:#fff; border-radius:14px; padding:6px 14px; box-shadow:var(--shadow); font-size:19px; line-height:1.3}
+.steps li .n{flex:none; width:34px; height:34px; border-radius:50%; background:var(--mint); color:var(--mint-d); display:grid; place-items:center; font-weight:700}
+.steps li.todo{opacity:.4; box-shadow:none; background:transparent; border:2px dashed var(--line)}
+.steps li.todo .n{background:var(--line); color:var(--muted)}
+
+.advice{display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin:6px 0 10px}
+.advice div{background:var(--mint); border-radius:16px; padding:18px; text-align:center}
+.advice b{display:block; font-family:Lexend; font-size:34px; color:var(--mint-d)}
+
+/* matrix */
+.mx-wrap{overflow-x:auto; padding-bottom:4px}
+.mx{display:grid; grid-template-columns:132px repeat(9, minmax(0,1fr)); gap:5px; min-width:1060px}
+.mx .h{font-family:Lexend; font-weight:600; font-size:14px; text-align:center; background:var(--ink); color:#fff; padding:8px 4px; border-radius:10px; line-height:1.15; display:flex; flex-direction:column; align-items:center; justify-content:center; min-height:44px}
+.mx .h b{display:block; font-size:12px; opacity:.75; font-weight:500}
+.mx .r{font-weight:700; display:flex; align-items:center; padding:8px 10px; border-radius:10px; font-size:17px; line-height:1.15}
+.mx .r{font-size:15px; background:var(--butter); color:#5c4300}
+.mx .r.effort{background:var(--lav); color:var(--lav-d)}
+.mx .r.risk{background:var(--sky); color:var(--sky-d)}
+.mx .r.rewards{background:var(--butter); color:#6b4e00}
+.mx .r.provocations{background:var(--mint); color:var(--mint-d)}
+.mx .r.excuses{background:var(--peach); color:#8a3d12}
+.mx .c{background:#fff; border-radius:10px; min-height:38px; padding:4px; display:flex; flex-direction:column; gap:4px; box-shadow:var(--shadow)}
+.mx .c span{display:block; font-size:12.5px; font-weight:700; line-height:1.2; background:#f4f1fb; border:1.5px solid #d4cdea; color:var(--ink); border-radius:6px; padding:3px 4px; white-space:normal; word-break:normal; overflow-wrap:normal; hyphens:none}
+.mx .c.empty{background:transparent; box-shadow:none; border:2px dashed var(--line)}
+
+.refs{list-style:none; padding:0}
+.refs li{margin-bottom:6px; padding-left:2.2em; text-indent:-2.2em; font-size:16px; line-height:1.35}
+.reflect li{margin-bottom:14px}
+.summary{max-width:860px}
+.summary h2{margin-top:1.2em}
+
+/* bottom bar */
+.bottom{display:flex; align-items:center; gap:14px; padding:10px 20px; background:rgba(255,255,255,.9); border-top:1px solid var(--line)}
+.support{flex:1; display:flex; flex-wrap:wrap; justify-content:center; gap:4px 18px; font-size:17px; text-align:center}
+.support strong{color:var(--accent)}
+.support a{font-weight:700}
+#autoBtn{display:none}
+#autoBtn.show{display:inline-flex}
+.navbtn{min-width:120px}
+
+@media (max-width:860px){
+  h1{font-size:32px} h2{font-size:27px}
+  .scene{padding:16px 16px 24px}
+  .split,.split.rev,.act3grid{grid-template-columns:1fr !important; gap:18px}
+  .choices,.vote,.advice,.stat2{grid-template-columns:1fr}
+  .scpgrid{grid-template-columns:1fr 1fr}
+  .stat{font-size:40px}
+  .top{flex-wrap:wrap; gap:8px 12px; padding:8px 16px}
+  .progress{order:5; flex-basis:100%}
+  .actlabel{display:none}
+  .bottom{flex-wrap:wrap; padding:8px 16px}
+  .support{order:-1; flex-basis:100%; font-size:16px}
+  .navbtn{flex:1; min-width:0}
+  .screen{height:340px}
+}
+@media (max-width:480px){ .scpgrid{grid-template-columns:1fr} }
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation:none !important; transition:none !important}
+}
+</style>
+</head>
+<body>
+
+<!-- shared SVG definitions (gradients, masks) used by every illustration -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <linearGradient id="gDusk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#cbbdf5"/><stop offset=".55" stop-color="#f8c8dc"/><stop offset="1" stop-color="#ffe7d6"/></linearGradient>
+    <linearGradient id="gDawn" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#bfe2f6"/><stop offset=".55" stop-color="#e6dcff"/><stop offset="1" stop-color="#ffe3ec"/></linearGradient>
+    <linearGradient id="gMint" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c3ece1"/><stop offset=".55" stop-color="#e5e0ff"/><stop offset="1" stop-color="#fff0e6"/></linearGradient>
+    <linearGradient id="gSplit" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#ffd7c8"/><stop offset=".45" stop-color="#f4c5df"/><stop offset="1" stop-color="#9d93d4"/></linearGradient>
+    <linearGradient id="gSun" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff2b8"/><stop offset="1" stop-color="#ff9db6"/></linearGradient>
+    <linearGradient id="gWater" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#c7e7f5"/><stop offset="1" stop-color="#b3c6f0"/></linearGradient>
+    <linearGradient id="gBeam" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff2b8" stop-opacity=".9"/><stop offset="1" stop-color="#fff2b8" stop-opacity="0"/></linearGradient>
+    <radialGradient id="gGlow"><stop offset="0" stop-color="#c4f6ff" stop-opacity=".95"/><stop offset="1" stop-color="#c4f6ff" stop-opacity="0"/></radialGradient>
+    <radialGradient id="gGlowP"><stop offset="0" stop-color="#ffd0e0" stop-opacity=".95"/><stop offset="1" stop-color="#ffd0e0" stop-opacity="0"/></radialGradient>
+    <radialGradient id="gGlowY"><stop offset="0" stop-color="#fff2b0" stop-opacity="1"/><stop offset="1" stop-color="#fff2b0" stop-opacity="0"/></radialGradient>
+    <mask id="mStripe" maskContentUnits="objectBoundingBox">
+      <rect width="1" height="1" fill="#fff"/>
+      <rect y=".56" width="1" height=".035" fill="#000"/><rect y=".67" width="1" height=".05" fill="#000"/>
+      <rect y=".79" width="1" height=".065" fill="#000"/><rect y=".91" width="1" height=".09" fill="#000"/>
+    </mask>
+  </defs>
+</svg>
+
+<header class="top">
+  <div class="actlabel" id="actLabel" aria-live="polite"></div>
+  <div class="progress" role="progressbar" aria-label="Progress through the game" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progressWrap"><i id="progress"></i></div>
+  <button class="toggle" id="tutorBtn" aria-pressed="false" title="Tutor mode adds discussion pauses and turns off auto-advance">
+    <span class="knob" aria-hidden="true"></span>Tutor mode <span class="state" id="tutorState">off</span>
+  </button>
+  <button class="iconbtn" id="restartBtn">Restart</button>
+</header>
+
+<main id="stage" tabindex="-1"></main>
+
+<div class="bottom">
+  <button class="btn ghost navbtn" id="backBtn" aria-label="Previous scene">← Back</button>
+  <div class="support" role="note" aria-label="Support services">
+    <span>Need support? <strong>Lifeline</strong> <a href="tel:131114">13 11 14</a> (24/7)</span>
+    <span><strong>eSafety Commissioner</strong>: <a href="https://www.esafety.gov.au" target="_blank" rel="noopener">esafety.gov.au</a> (report image-based abuse)</span>
+  </div>
+  <button class="btn soft" id="autoBtn" aria-pressed="false">Pause auto-play</button>
+  <button class="btn navbtn" id="nextBtn" aria-label="Next scene">Next →</button>
+</div>
+
+<script>
+/* =====================================================================
+   SOURCES. Every data card and the references page read from here.
+   Any string starting with "[DATA NEEDED" renders as a yellow placeholder.
+   ===================================================================== */
+const REF = {
+  adeniran: { inText:"(Adeniran, 2008)",
+    full:"Adeniran, A. I. (2008). The Internet and emergence of Yahooboys sub-culture in Nigeria. <i>International Journal of Cyber Criminology, 2</i>(2), 368." },
+  leclerc: { inText:"(Leclerc, 2017)",
+    full:"Leclerc, B. (2017). Crime scripts. In R. Wortley &amp; M. Townsley (Eds.), <i>Environmental criminology and crime analysis</i> (2nd ed., pp. 119–141). Routledge." },
+  bruce: { inText:"(Bruce et al., 2024)",
+    full:"Bruce, M., Lusthaus, J., Kashyap, R., Phair, N., &amp; Varese, F. (2024). Mapping the global geography of cybercrime with the World Cybercrime Index. <i>PLOS ONE, 19</i>(4), Article e0297312. https://doi.org/10.1371/journal.pone.0297312" },
+  thornNcmec: { inText:"(Thorn &amp; National Center for Missing &amp; Exploited Children, 2024)", inText2:"(Thorn &amp; National Center for Missing &amp; Exploited Children, 2024)",
+    full:"Thorn &amp; National Center for Missing &amp; Exploited Children. (2024). <i>Trends in financial sextortion: An investigation of sextortion reports in NCMEC CyberTipline data</i>." },
+  wolak: { inText:"(Wolak &amp; Finkelhor, 2016)",
+    full:"Wolak, J., &amp; Finkelhor, D. (2016). <i>Sextortion: Findings from a survey of 1,631 victims</i>. Crimes Against Children Research Center, University of New Hampshire." },
+  thorn2025: { inText:"(Thorn, 2025)",
+    full:"Thorn. (2025, June 24). <i>The state of sextortion in 2025</i>. https://www.thorn.org/blog/the-state-of-sextortion-in-2025/" },
+  esafety: { inText:"(eSafety Commissioner, n.d.)",
+    full:"eSafety Commissioner. (n.d.). <i>Deal with sextortion</i>. Retrieved October 14, 2026, from https://www.esafety.gov.au/key-topics/image-based-abuse/deal-with-sextortion" },
+  scp: { inText:"(Cornish &amp; Clarke, 2003)",
+    full:"Cornish, D. B., &amp; Clarke, R. V. (2003). Opportunities, precipitators and criminal decisions: A reply to Wortley’s critique of situational crime prevention. <i>Crime Prevention Studies, 16</i>, 41–96." }
+};
+/* reference list order: alphabetical (APA 7) */
+const REFS = ["adeniran","bruce","scp","esafety","leclerc","thorn2025","thornNcmec","wolak"].map(k=>REF[k].full);
+
+/* ---------- helpers ---------- */
+const ph = s => (typeof s === "string" && s.startsWith("[DATA NEEDED")) ? `<span class="dn">${s}</span>` : s;
+const tags = (...t) => `<div class="tags">${t.map(x => {
+  const [k, label] = x.split("|");
+  const labels = {fiction:"Fictional narrative", data:"Data card", concept:"Concept", warn:"Content warning"};
+  return `<span class="tag ${k}">${label || labels[k]}</span>`;
+}).join("")}</div>`;
+const stage = name => `<span class="tag stage">Script stage: ${name}</span>`;
+const cite = (...keys) => `<div class="cite">${keys.map(k=>{const r=REF[k]; return `<p><b>In-text:</b> ${ph(r.inText)} &nbsp; <b>Reference:</b> ${ph(r.full)}</p>`;}).join("")}</div>`;
+
+/* =====================================================================
+   ILLUSTRATION KIT: pastel isometric, Monument Valley + vaporwave
+   ===================================================================== */
+const C30 = 0.8660254;
+const T = {
+  cream:["#fff7ea","#f3e2c6","#e4cca8"], pink:["#ffdbe7","#f6b9cd","#e99ab4"],
+  lilac:["#ebe3ff","#cbbcf5","#ad9ce8"], mint:["#d8f6ec","#ade5d2","#8bd0b9"],
+  peach:["#ffe5d2","#f9c7a6","#efa985"], sky:["#dbeeff","#b0d4f3","#90bce4"],
+  coral:["#ffbfb3","#f59a8d","#e57d73"], indigo:["#9d95d6","#7d74bf","#655ca8"],
+  rose:["#ffd1df","#f2a5bd","#de87a3"]
+};
+const f1 = n => n.toFixed(1);
+const poly = (pts, fill, extra="") => `<polygon points="${pts.join(" ")}" fill="${fill}" ${extra}/>`;
+function iso(ox, oy){
+  const p = (X,Y,Z=0) => [ox+(X-Y)*C30, oy+(X+Y)*0.5-Z];
+  const s = (X,Y,Z=0) => p(X,Y,Z).map(f1).join(",");
+  return {
+    p, s,
+    box(X,Y,Z,w,d,h,c){
+      return poly([s(X,Y+d,Z),s(X+w,Y+d,Z),s(X+w,Y+d,Z+h),s(X,Y+d,Z+h)],c[1])
+           + poly([s(X+w,Y,Z),s(X+w,Y+d,Z),s(X+w,Y+d,Z+h),s(X+w,Y,Z+h)],c[2])
+           + poly([s(X,Y,Z+h),s(X+w,Y,Z+h),s(X+w,Y+d,Z+h),s(X,Y+d,Z+h)],c[0]);
+    },
+    rock(X,Y,Z,w,d,depth,c){
+      const A = s(X+w*.55, Y+d*.55, Z-depth);
+      return poly([s(X,Y+d,Z),s(X+w,Y+d,Z),A],c[0]) + poly([s(X+w,Y+d,Z),s(X+w,Y,Z),A],c[1]);
+    },
+    /* arched opening on a left-facing (+Y) face at constant Y */
+    archY(X,Y,Z,w,h,fill){
+      const a=s(X,Y,Z),b=s(X+w,Y,Z),c=s(X+w,Y,Z+h),d=s(X,Y,Z+h),k=s(X+w/2,Y,Z+h+w*.75);
+      return `<path d="M${a} L${b} L${c} Q${k} ${d} Z" fill="${fill}"/>`;
+    },
+    /* arched opening on a right-facing (+X) face at constant X */
+    archX(X,Y,Z,w,h,fill){
+      const a=s(X,Y,Z),b=s(X,Y+w,Z),c=s(X,Y+w,Z+h),d=s(X,Y,Z+h),k=s(X,Y+w/2,Z+h+w*.75);
+      return `<path d="M${a} L${b} L${c} Q${k} ${d} Z" fill="${fill}"/>`;
+    },
+    /* square pyramid sitting on Z */
+    pyramid(X,Y,Z,w,h,c){
+      const A=s(X+w/2,Y+w/2,Z+h);
+      return poly([s(X,Y+w,Z),s(X+w,Y+w,Z),A],c[1]) + poly([s(X+w,Y+w,Z),s(X+w,Y,Z),A],c[2]);
+    }
+  };
+}
+function cyl(cx,cy,r,h,c){
+  const ry=r*.5, t=cy-h;
+  return `<path d="M${f1(cx-r)} ${f1(t)} V${f1(cy)} A${r} ${ry} 0 0 0 ${f1(cx)} ${f1(cy+ry)} V${f1(t+ry)} A${r} ${ry} 0 0 1 ${f1(cx-r)} ${f1(t)}Z" fill="${c[1]}"/>
+  <path d="M${f1(cx)} ${f1(t+ry)} V${f1(cy+ry)} A${r} ${ry} 0 0 0 ${f1(cx+r)} ${f1(cy)} V${f1(t)} A${r} ${ry} 0 0 1 ${f1(cx)} ${f1(t+ry)}Z" fill="${c[2]}"/>
+  <ellipse cx="${f1(cx)}" cy="${f1(t)}" rx="${r}" ry="${ry}" fill="${c[0]}"/>`;
+}
+function dome(cx,cy,r,c){
+  return `<path d="M${f1(cx-r)} ${f1(cy)} A${r} ${r} 0 0 1 ${f1(cx+r)} ${f1(cy)} A${r} ${r*.5} 0 0 1 ${f1(cx-r)} ${f1(cy)}Z" fill="${c[0]}"/>
+  <path d="M${f1(cx)} ${f1(cy-r)} A${r} ${r} 0 0 1 ${f1(cx+r)} ${f1(cy)} A${r} ${r*.5} 0 0 1 ${f1(cx)} ${f1(cy+r*.5)}Z" fill="${c[1]}"/>
+  <circle cx="${f1(cx)}" cy="${f1(cy-r-5)}" r="4" fill="${c[2]}"/>`;
+}
+function tree(x,y,s=1,c=T.mint){
+  return `<g transform="translate(${f1(x)} ${f1(y)}) scale(${s})">
+    <ellipse cx="0" cy="0" rx="14" ry="5" fill="#22213f" opacity=".12"/>
+    <rect x="-2.5" y="-30" width="5" height="30" rx="2" fill="#c9a98a"/>
+    <circle cx="0" cy="-44" r="20" fill="${c[1]}"/>
+    <path d="M0 -64 A20 20 0 0 1 0 -24 A20 20 0 0 0 0 -64Z" fill="${c[2]}"/>
+    <path d="M0 -64 A20 20 0 0 1 20 -44 A20 20 0 0 1 0 -24Z" fill="${c[2]}"/>
+    <circle cx="-7" cy="-51" r="6" fill="${c[0]}" opacity=".9"/>
+  </g>`;
+}
+function sun(cx,cy,r){ return `<circle cx="${cx}" cy="${cy}" r="${r}" fill="url(#gSun)" mask="url(#mStripe)"/>`; }
+function moon(cx,cy,r){ return `<path d="M${cx} ${cy-r} A${r} ${r} 0 1 0 ${cx} ${cy+r} A${r*.72} ${r} 0 1 1 ${cx} ${cy-r}Z" fill="#fff6d8"/>`; }
+function sparkle(x,y,s=1,o=.85){ return `<path transform="translate(${x} ${y}) scale(${s})" d="M0 -8 L2 -2 L8 0 L2 2 L0 8 L-2 2 L-8 0 L-2 -2Z" fill="#fff" opacity="${o}"/>`; }
+function diamond(x,y,s=1,c=T.pink){ return `<g transform="translate(${x} ${y}) scale(${s})"><path d="M0 -14 L10 0 L0 14 Z" fill="${c[1]}"/><path d="M0 -14 L-10 0 L0 14Z" fill="${c[0]}"/></g>`; }
+function water(y){ return `<rect x="0" y="${y}" width="600" height="${400-y}" fill="url(#gWater)"/>`
+  + [[60,y+26,70],[250,y+44,90],[430,y+22,60],[500,y+52,50]].map(([x,yy,w])=>`<rect x="${x}" y="${yy}" width="${w}" height="3" rx="1.5" fill="#fff" opacity=".55"/>`).join(""); }
+
+/* Monument-Valley-style figure: faceless robed cone, round head */
+function fig(x,y,o={}){
+  const s=o.s||1, r=o.robe||T.lilac, head=o.head||"#fff3e6";
+  const hair = o.hair ? `<path d="M-8 -52 A8 8 0 0 1 8 -52 A8 4.5 0 0 0 -8 -52Z" fill="${o.hair}"/>` : "";
+  const hat = o.hat==="cone" ? `<path d="M-8 -55 L0 -78 L8 -55Z" fill="${r[2]}"/>`
+    : o.hat==="cap" ? `<path d="M-8.5 -54 A8.5 8.5 0 0 1 8.5 -54Z" fill="${r[2]}"/><rect x="0" y="-56" width="13" height="3" rx="1.5" fill="${r[2]}"/>`
+    : o.hat==="bun" ? `<circle cx="0" cy="-61" r="4.5" fill="${r[2]}"/>` : "";
+  const phone = o.phone ? `<circle cx="9" cy="-29" r="16" fill="url(#gGlow)"/><rect x="5.5" y="-35" width="7.5" height="12" rx="1.6" fill="#2d2a5a"/><rect x="6.6" y="-33.6" width="5.3" height="9" rx="1" fill="#c9f7ff"/>` : "";
+  if(o.ghost){
+    return `<g transform="translate(${f1(x)} ${f1(y)}) scale(${s})"><ellipse cx="0" cy="0" rx="15" ry="5.5" fill="#22213f" opacity=".08"/>
+      <path d="M-13 0 L13 0 L5.5 -44 L-5.5 -44Z" fill="#fff" fill-opacity=".35" stroke="#9b2645" stroke-width="1.6" stroke-dasharray="3 3"/>
+      <circle cx="0" cy="-51" r="8" fill="#fff" fill-opacity=".35" stroke="#9b2645" stroke-width="1.6" stroke-dasharray="3 3"/></g>`;
+  }
+  return `<g transform="translate(${f1(x)} ${f1(y)}) scale(${s})">
+    <ellipse cx="0" cy="0" rx="15" ry="5.5" fill="#22213f" opacity=".13"/>
+    <path d="M-13 0 L0 0 L0 -44 L-5.5 -44Z" fill="${r[0]}"/>
+    <path d="M0 0 L13 0 L5.5 -44 L0 -44Z" fill="${r[1]}"/>
+    <rect x="-6" y="-46" width="12" height="3.5" rx="1.75" fill="${r[2]}"/>
+    <circle cx="0" cy="-51" r="8" fill="${head}"/>
+    <path d="M0 -59 A8 8 0 0 1 0 -43Z" fill="#22213f" opacity=".1"/>
+    ${hair}${hat}${phone}
+  </g>`;
+}
+const svgWrap = (id, label, inner, vb="0 0 600 400") =>
+  `<svg viewBox="${vb}" role="img" aria-labelledby="${id}"><title id="${id}">${label}</title>${inner}</svg>`;
+
+const SVG = {
+  title(){
+    const I = iso(156,330); let g="";
+    g += I.rock(-14,-430,0,72,478,24,[T.lilac[1],T.lilac[2]]) + I.box(-14,-430,0,72,478,12,T.cream);
+    const pal=[T.peach,T.pink,T.lilac,T.sky,T.mint,T.peach,T.pink,T.lilac,T.coral];
+    for(let i=8;i>=0;i--){
+      const Y=-48*i;
+      g += I.box(2,Y,12,40,40,34,pal[i]);
+      const [cx,cy]=I.p(42,Y+20,29);
+      g += `<text transform="matrix(${C30} -0.5 0 1 ${f1(cx)} ${f1(cy)})" text-anchor="middle" dy="7" font-family="Lexend" font-weight="700" font-size="20" fill="#22213f">${i+1}</text>`;
+    }
+    const [ex,ey]=I.p(22,-48*8+20,46);
+    const [sx,sy]=I.p(22,20,46);
+    return svgWrap("t-title","Illustration: nine level pastel blocks in a row on a floating platform, numbered one to nine for the nine crime script stages. A glowing dollar emoji floats above block nine, the payoff. A dotted arc loops from block nine back to block one, signalling a rewind.",
+      `<rect width="600" height="400" fill="url(#gDusk)"/>${sparkle(90,70)}${sparkle(260,40,.7)}${sparkle(560,250,.6)}${sparkle(520,60,.8)}
+       ${g}
+       <circle cx="${f1(ex)}" cy="${f1(ey-30)}" r="40" fill="url(#gGlowY)"/>
+       <text x="${f1(ex)}" y="${f1(ey-16)}" text-anchor="middle" font-size="40" font-family="'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">💵</text>
+       <path d="M${f1(ex-30)} ${f1(ey-58)} Q${f1((ex+sx)/2-60)} ${f1(Math.min(ey,sy)-150)} ${f1(sx-14)} ${f1(sy-40)}" fill="none" stroke="#c2364f" stroke-width="4" stroke-linecap="round" stroke-dasharray="1 11"/>
+       <path d="M${f1(sx-30)} ${f1(sy-54)} L${f1(sx-14)} ${f1(sy-38)} L${f1(sx+6)} ${f1(sy-52)}" fill="none" stroke="#c2364f" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>`);
+  },
+  lagos(){
+    const AF=[[-6,36],[-1,35.5],[3,36.8],[11,37.1],[10.5,34],[11.5,33],[19,30.5],[20,32],[25,31.7],[30,31.5],[32.5,30],[35,24],[38,18],[43,12.5],[51,11.8],[49,8],[45,2],[41,-2],[39,-6],[40,-11],[40.5,-15],[35,-22],[33,-26],[31,-29],[27,-33.7],[20,-34.8],[18,-33.5],[16,-28],[14.5,-23],[12,-17],[13.5,-11],[12,-6],[9,-1],[9.5,3.5],[7,4.5],[3,6.4],[-2,5],[-7.5,4.4],[-11,7],[-13.5,9.5],[-17,14.7],[-16.5,19.5],[-17,21],[-13,27.5],[-10,29.5],[-9.5,32.5]];
+    const k=4.5, ox=158, oy=34;
+    const P=(lon,lat)=>{const x0=(lon+18)*k, y0=(37-lat)*k; return [ox+x0*0.92-y0*0.30, oy+y0*0.62+x0*0.18];};
+    const path=(dy)=>"M"+AF.map(([a,b])=>{const [x,y]=P(a,b); return f1(x)+" "+f1(y+dy);}).join(" L")+"Z";
+    const [mx,my]=P(47,-19.5);
+    let g = `<path d="${path(20)}" fill="${T.indigo[1]}"/><path d="${path(10)}" fill="${T.indigo[0]}"/><path d="${path(0)}" fill="${T.peach[0]}"/>`;
+    g += `<ellipse cx="${f1(mx)}" cy="${f1(my+12)}" rx="9" ry="16" transform="rotate(-20 ${f1(mx)} ${f1(my+12)})" fill="${T.indigo[1]}"/><ellipse cx="${f1(mx)}" cy="${f1(my)}" rx="9" ry="16" transform="rotate(-20 ${f1(mx)} ${f1(my)})" fill="${T.peach[0]}"/>`;
+    /* soft regions for texture */
+    const [sx,sy]=P(18,24); g += `<ellipse cx="${f1(sx)}" cy="${f1(sy)}" rx="80" ry="26" fill="${T.cream[1]}" opacity=".55"/>`;
+    const [cx2,cy2]=P(22,-2); g += `<ellipse cx="${f1(cx2)}" cy="${f1(cy2)}" rx="46" ry="20" fill="${T.mint[1]}" opacity=".7"/>`;
+    const [lx,ly]=P(3.4,6.5);
+    g += `<circle cx="${f1(lx)}" cy="${f1(ly)}" r="26" fill="url(#gGlowP)"/><ellipse cx="${f1(lx)}" cy="${f1(ly)}" rx="7" ry="3.5" fill="#c2364f"/>`;
+    const sk=["#5b3a29","#3f2a1e","#6e4532"], hr="#1d1410";
+    const F1=P(-6,11), F2=P(1,12.5), F3=P(8.5,11);
+    g += fig(F1[0],F1[1],{robe:T.coral,phone:true,head:sk[0],hair:hr,s:1.05})
+       + fig(F2[0],F2[1],{robe:T.lilac,head:sk[1],hat:"cap",s:1.05})
+       + fig(F3[0],F3[1],{robe:T.mint,phone:true,head:sk[2],hair:hr,s:1.05});
+    const plate=(x,y,txt,w)=>`<rect x="${f1(x-w/2)}" y="${f1(y-16)}" width="${w}" height="30" rx="15" fill="#fff" opacity=".95"/><text x="${f1(x)}" y="${f1(y+5)}" text-anchor="middle" font-family="Lexend" font-weight="700" font-size="16" fill="#22213f">${txt}</text>`;
+    g += plate(lx-96, ly+40, "Lagos, Nigeria", 130);
+    return svgWrap("t-lagos","Illustration: a pastel map of Africa floating on a lagoon at dusk. Three young Black men, drawn as faceless robed figures, stand on West Africa near a glowing marker for Lagos, Nigeria. Two hold glowing phones.",
+      `<rect width="600" height="400" fill="url(#gDusk)"/>${moon(540,64,22)}${sparkle(470,40,.6)}${sparkle(60,60,.7)}${sparkle(570,200,.5)}${water(262)}${g}`);
+  },
+  strain(){
+    const I = iso(300,62); let g="";
+    g += I.rock(0,0,0,250,250,46,[T.lilac[1],T.lilac[2]]) + I.box(0,0,0,250,250,12,T.mint);
+    /* dividing paths into four zones */
+    /* 1 blocked opportunity: gate with closed bars (back) */
+    g += I.box(30,40,12,12,12,74,T.peach) + I.box(84,40,12,12,12,74,T.peach) + I.box(30,40,86,66,12,12,T.peach);
+    for(let k=0;k<4;k++) g += I.box(48+k*10,45,12,3,3,74,T.indigo);
+    /* 2 status: tower with glowing gem (right) */
+    g += I.box(176,46,12,30,30,92,T.lilac) + I.archY(184,76,12,14,24,"#9d8fdc");
+    const [gx,gy]=I.p(191,61,128); g += `<circle cx="${f1(gx)}" cy="${f1(gy)}" r="28" fill="url(#gGlowP)"/>${diamond(gx,gy,1.1,T.rose)}`;
+    /* 3 peer learning: two Black figures passing a glowing orb (left) */
+    const P1=I.p(4,200,12), P2=I.p(40,170,12);
+    g += fig(P1[0],P1[1],{robe:T.coral,head:"#5b3a29",hair:"#1d1410",s:1.05}) + fig(P2[0],P2[1],{robe:T.sky,head:"#3f2a1e",hat:"cap",s:1.05});
+    const mx=(P1[0]+P2[0])/2, my=(P1[1]+P2[1])/2-46;
+    g += `<circle cx="${f1(mx)}" cy="${f1(my)}" r="16" fill="url(#gGlow)"/><circle cx="${f1(mx)}" cy="${f1(my)}" r="5" fill="#fff"/>`;
+    /* 4 ready-made scripts: floating tablet (front) */
+    const [sx,sy]=I.p(186,186,12); g += `<ellipse cx="${f1(sx)}" cy="${f1(sy)}" rx="26" ry="9" fill="#22213f" opacity=".1"/>`;
+    g += I.box(160,166,52,52,40,5,T.cream);
+    for(let k=0;k<4;k++){ const a=I.s(168,174+k*8,57), b=I.s(200-k*5,174+k*8,57); g += `<polyline points="${a} ${b}" stroke="#c2364f" stroke-width="2.4" stroke-linecap="round" opacity=".6"/>`; }
+    /* label plates, placed on open ground so no line crosses them */
+    const plate=(x,y,n,txt)=>{ const w=Math.round(46+txt.length*8.4); return `<g><rect x="${f1(x-w/2)}" y="${f1(y-15)}" width="${w}" height="30" rx="15" fill="#fff" opacity=".96"/><circle cx="${f1(x-w/2+15)}" cy="${f1(y)}" r="10" fill="#22213f"/><text x="${f1(x-w/2+15)}" y="${f1(y+4.5)}" text-anchor="middle" font-family="Lexend" font-weight="700" font-size="13" fill="#fff">${n}</text><text x="${f1(x-w/2+31)}" y="${f1(y+5)}" font-family="Lexend" font-weight="700" font-size="14" fill="#22213f">${txt}</text></g>`;};
+    g += plate(318,146,1,"Blocked opportunity") + plate(424,224,2,"Status") + plate(166,194,3,"Peer learning") + plate(300,284,4,"Ready-made scripts");
+    return svgWrap("t-strain","Illustration: a floating pastel island divided into four numbered zones. One: a gate with its bars closed, for blocked opportunity. Two: a tall tower topped by a glowing gem, for status. Three: two young Black men, drawn as faceless robed figures, passing a glowing orb between them, for peer learning. Four: a tablet with lines of text hovering in the air, for ready-made scripts.",
+      `<rect width="600" height="400" fill="url(#gMint)"/>${sparkle(80,60)}${sparkle(560,90,.7)}${sparkle(560,260,.6)}<g transform="translate(300 222) scale(1.06) translate(-300 -180)">${g}</g>`);
+  },
+  map(){
+    const U = iso(140,210), L = iso(420,196); let g="";
+    g += U.rock(0,0,0,130,90,70,[T.peach[1],T.peach[2]]) + U.box(0,0,0,130,90,10,T.mint);
+    g += U.box(30,15,10,64,44,46,T.cream) + U.archY(48,59,10,16,24,"#e4cca8");
+    const [dx,dy]=U.p(62,37,56); g += dome(dx,dy,18,T.pink);
+    const [t1x,t1y]=U.p(112,70,10); g += tree(t1x,t1y,.8);
+    g += L.rock(0,0,0,120,90,70,[T.indigo[1],T.indigo[2]]) + L.box(0,0,0,120,90,10,T.lilac);
+    g += L.box(20,10,10,30,30,84,T.sky) + L.box(66,16,10,34,30,56,T.pink) + L.box(30,56,10,26,24,30,T.cream);
+    const [ex,ey]=L.p(35,25,94);
+    const [sx,sy]=U.p(62,37,82);
+    const pts=[]; for(let k=1;k<9;k++){const t=k/9; const cx=(sx+ex)/2, cy=Math.min(sy,ey)-130;
+      const x=(1-t)*(1-t)*ex+2*(1-t)*t*cx+t*t*sx, y=(1-t)*(1-t)*ey+2*(1-t)*t*cy+t*t*sy;
+      pts.push(`<circle cx="${f1(x)}" cy="${f1(y)}" r="${(3+3*Math.sin(t*Math.PI)).toFixed(1)}" fill="#fff" stroke="#c2364f" stroke-width="2"/>`);}
+    const plate=(x,y,txt,w)=>`<rect x="${x-w/2}" y="${y-18}" width="${w}" height="32" rx="16" fill="#fff" opacity=".92"/><text x="${x}" y="${y+5}" text-anchor="middle" font-family="Lexend" font-weight="700" font-size="17" fill="#22213f">${txt}</text>`;
+    return svgWrap("t-map","Illustration: two floating islands. On the left, the USA, with a domed campus building under a low evening sun. On the right, Lagos, with pastel towers under a crescent moon and stars. A dotted line of small orbs, like messages, arcs from Lagos to the USA.",
+      `<rect width="600" height="400" fill="url(#gSplit)"/>${sun(70,120,44)}${moon(535,70,24)}${sparkle(470,40,.6)}${sparkle(580,140,.5)}${sparkle(400,90,.5)}
+       ${g}${pts.join("")}${plate(178,366,"USA",86)}${plate(452,366,"Lagos",96)}`);
+  },
+  campus(){
+    const I = iso(300,128); let g="";
+    g += poly([I.s(-500,-500,0),I.s(700,-500,0),I.s(700,700,0),I.s(-500,700,0)],T.mint[0]);
+    g += I.box(-500,118,0,1200,30,1,T.cream) + I.box(96,-500,0,30,1200,1,T.cream);
+    /* main hall */
+    g += I.box(-10,-170,0,160,80,84,T.peach) + I.box(-16,-176,84,172,92,8,T.cream);
+    const [dx,dy]=I.p(70,-130,92); g += dome(dx,dy,34,T.pink);
+    [0,30,90,120].forEach(x=>{ g += I.box(x,-88,0,9,9,84,T.cream); });
+    g += I.archY(50,-90,0,32,48,"#efa985");
+    /* clock tower */
+    g += I.box(190,-150,0,34,34,150,T.lilac) + I.pyramid(186,-154,150,42,40,T.indigo);
+    const [kx,ky]=I.p(207,-116,122); g += `<ellipse cx="${f1(kx)}" cy="${f1(ky)}" rx="9" ry="11" transform="skewY(-30) translate(0 0)" fill="#fff" opacity="0"/>`;
+    g += `<circle cx="${f1(kx-1)}" cy="${f1(ky)}" r="10" fill="#fff"/><path d="M${f1(kx-1)} ${f1(ky)} v-6 M${f1(kx-1)} ${f1(ky)} h5" stroke="#22213f" stroke-width="2" stroke-linecap="round"/>`;
+    /* library */
+    g += I.box(-170,-70,0,90,90,60,T.sky) + I.archX(-80,-56,0,22,32,"#79a5d6") + I.archX(-80,-20,0,22,32,"#79a5d6") + I.box(-174,-74,60,98,98,6,T.cream);
+    /* trees and background students */
+    const tr=(X,Y,sc)=>{const [x,y]=I.p(X,Y,0); return tree(x,y,sc);};
+    g += tr(-40,-30,1) + tr(170,-40,1.1) + tr(250,40,1);
+    const st=(X,Y,o)=>{const [x,y]=I.p(X,Y,0); return fig(x,y,o);};
+    g += st(150,70,{robe:T.coral,head:"#8d5a3b",s:1}) + st(30,40,{robe:T.lilac,head:"#f3d2b8",hat:"bun",s:1});
+    g += I.box(-60,96,0,44,14,10,T.cream);
+    g += tr(-120,60,1.15);
+    g += st(70,170,{robe:T.sky,phone:true,s:2.3});
+    g += tr(220,190,1.2);
+    return svgWrap("t-campus","Illustration: a pastel isometric college campus with a domed hall, columns, a clock tower, a library, paths, lawns and trees. Two students walk in the background. In the foreground, Alex, a faceless figure in a sky-blue robe, stands on the path looking at a glowing phone.",
+      `<rect width="600" height="400" fill="url(#gDawn)"/><g transform="translate(300 232) scale(.68) translate(-300 -200)">${g}</g>${sparkle(70,40)}${sparkle(540,50,.6)}`);
+  },
+  avatar(){
+    return `<svg viewBox="0 0 84 84" aria-hidden="true"><rect width="84" height="84" fill="url(#gDusk)"/>${sun(62,24,12)}${fig(42,84,{robe:T.rose,hat:"bun",s:1.15})}</svg>`;
+  },
+  scpOverview(){
+    const keys=["effort","risk","rewards","provocations","excuses"];
+    const pos=[[30,30],[220,30],[410,30],[125,205],[315,205]];
+    let g="";
+    keys.forEach((k,i)=>{
+      const [x,y]=pos[i];
+      g += `<rect x="${x+8}" y="${y+8}" width="144" height="150" rx="20" fill="#fff" opacity=".55"/>`;
+      g += `<svg x="${x}" y="${y}" width="160" height="120" viewBox="0 0 160 130">${SVG.scpInner(k)}</svg>`;
+      const [w1,...w2]=SCP[k].label.split(" ");
+      g += `<text x="${x+80}" y="${y+132}" text-anchor="middle" font-family="Lexend" font-weight="700" font-size="16" fill="#22213f"><tspan x="${x+80}">${w1}</tspan><tspan x="${x+80}" dy="18">${w2.join(" ")}</tspan></text>`;
+    });
+    return svgWrap("t-scpov","Illustration: the five situational crime prevention techniques as pastel isometric icons. Increase effort: a wall with a padlock. Increase risk: a lighthouse beam. Reduce rewards: an empty dashed box where the prize was. Reduce provocations: calm stacked stones in still water. Remove excuses: a sign with rules on it.",
+      `<rect width="600" height="400" fill="url(#gMint)"/>${sparkle(580,190,.6)}${sparkle(20,200,.6)}${g}`);
+  },
+  finale(){
+    const L = iso(150,236), Rt = iso(452,226); let g="";
+    /* Alex's island (left, sunset) */
+    g += L.rock(0,0,0,120,100,54,[T.peach[1],T.peach[2]]) + L.box(0,0,0,120,100,10,T.cream);
+    g += L.box(14,8,10,40,34,40,T.pink) + L.archY(24,42,10,16,22,"#de87a3");
+    const [t1x,t1y]=L.p(100,20,10); g += tree(t1x,t1y,.8);
+    const [ax,ay]=L.p(70,74,10); g += fig(ax,ay,{robe:T.sky,phone:true,s:1.35});
+    /* offenders' island (right, moonlit) */
+    g += Rt.rock(0,0,0,120,100,54,[T.indigo[1],T.indigo[2]]) + Rt.box(0,0,0,120,100,10,T.lilac);
+    g += Rt.box(66,8,10,34,30,58,T.sky) + Rt.archX(100,16,10,14,22,"#79a5d6");
+    const [o1x,o1y]=Rt.p(14,70,10), [o2x,o2y]=Rt.p(62,56,10);
+    g += fig(o1x,o1y,{robe:T.coral,head:"#5b3a29",hair:"#1d1410",phone:true,s:1.3}) + fig(o2x,o2y,{robe:T.mint,head:"#3f2a1e",hat:"cap",s:1.3});
+    /* five SCP emojis floating between them, an arc that blocks the path */
+    const EM=[["🔒","Increase effort"],["👁️","Increase risk"],["💸","Reduce rewards"],["🕊️","Reduce provocations"],["📜","Remove excuses"]];
+    EM.forEach(([e],i)=>{
+      const t=i/4, x=300+Math.sin((t-.5)*Math.PI)*22, y=72+t*216;
+      g += `<g transform="translate(${f1(x)} ${f1(y)})"><rect x="-23" y="-23" width="46" height="46" rx="12" transform="rotate(45)" fill="#fff" opacity=".93"/><text y="9" text-anchor="middle" font-size="26" font-family="'Apple Color Emoji','Segoe UI Emoji','Noto Color Emoji',sans-serif">${e}</text></g>`;
+    });
+    return svgWrap("t-finale","Illustration: on the left, Alex stands on a small island under a striped sunset sun. On the right, two of the offenders stand on a moonlit island. Between them floats a column of five emoji tiles, one per situational crime prevention technique: a padlock for increase effort, an eye for increase risk, money flying away for reduce rewards, a dove for reduce provocations and a scroll for remove excuses.",
+      `<rect width="600" height="400" fill="url(#gSplit)"/>${sun(96,96,48)}${moon(520,74,26)}${sparkle(560,150,.6)}${sparkle(440,44,.6)}${sparkle(40,200,.5)}${water(330)}${g}`);
+  },
+  alt(){
+    const I = iso(250,214); let g="";
+    g += I.rock(0,0,0,170,130,60,[T.mint[1],T.mint[2]]) + I.box(0,0,0,170,130,12,T.cream);
+    g += I.box(20,8,12,18,18,118,T.lilac) + I.box(132,8,12,18,18,118,T.lilac) + I.box(20,8,130,130,18,18,T.lilac);
+    const A=I.p(50,100,12), B=I.p(110,110,12);
+    g += fig(A[0],A[1],{robe:T.sky,phone:true,s:1.4}) + fig(B[0],B[1],{robe:T.rose,hat:"bun",s:1.4});
+    g += `<g transform="translate(150 120)"><rect x="-22" y="-22" width="44" height="44" rx="12" transform="rotate(45)" fill="#fff"/><path d="M-10 0 L-3 8 L11 -8" fill="none" stroke="#1d6a55" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/></g>`;
+    return svgWrap("t-alt","Illustration: sunrise through a pastel archway on a floating island. Alex, in a sky-blue robe, stands next to a friend in a rose robe. A floating white tile with a green tick hovers beside them, signalling that the account has been blocked and reported.",
+      `<rect width="600" height="400" fill="url(#gMint)"/>${sun(318,150,64)}${sparkle(90,70)}${sparkle(530,60,.7)}${sparkle(560,260,.5)}${water(338)}${g}`);
+  },
+  /* small icons for the situational crime prevention page */
+  scpIcon(kind){ return `<svg viewBox="0 0 160 130" aria-hidden="true">${SVG.scpInner(kind)}</svg>`; },
+  scpInner(kind){
+    const I = iso(80,96); let g="";
+    if(kind==="effort"){
+      g = I.box(-30,-6,0,70,16,46,T.lilac) + I.box(-30,-6,46,70,16,4,T.lilac);
+      const [x,y]=I.p(5,10,24);
+      g += `<path d="M${f1(x-7)} ${f1(y-4)} v-6 a7 7 0 0 1 14 0 v6" fill="none" stroke="#22213f" stroke-width="3"/><rect x="${f1(x-10)}" y="${f1(y-4)}" width="20" height="15" rx="3" fill="#22213f"/><circle cx="${f1(x)}" cy="${f1(y+3)}" r="2.5" fill="#fff"/>`;
+    } else if(kind==="risk"){
+      const [lx,ly]=I.p(0,0,74);
+      g = `<path d="M${f1(lx)} ${f1(ly)} L150 96 L150 128 L104 128Z" fill="url(#gBeam)"/>` + I.box(-10,-10,0,20,20,62,T.sky) + I.box(-14,-14,62,28,28,6,T.sky);
+      g += `<circle cx="${f1(lx)}" cy="${f1(ly)}" r="20" fill="url(#gGlowY)"/><circle cx="${f1(lx)}" cy="${f1(ly)}" r="6" fill="#ffe27a"/>` + I.pyramid(-14,-14,68,28,22,T.indigo);
+    } else if(kind==="rewards"){
+      g = I.box(-20,-20,0,40,40,26,T.cream);
+      const s=I.s; g += `<polygon points="${s(-12,-12,32)} ${s(12,-12,32)} ${s(12,12,32)} ${s(-12,12,32)}" fill="none" stroke="#c2364f" stroke-width="2" stroke-dasharray="4 4"/>`
+        + `<polyline points="${s(-12,12,32)} ${s(-12,12,56)} ${s(12,12,56)} ${s(12,12,32)}" fill="none" stroke="#c2364f" stroke-width="2" stroke-dasharray="4 4"/>`
+        + `<polyline points="${s(12,12,56)} ${s(12,-12,56)} ${s(12,-12,32)}" fill="none" stroke="#c2364f" stroke-width="2" stroke-dasharray="4 4"/>`
+        + `<polyline points="${s(-12,12,56)} ${s(-12,-12,56)} ${s(12,-12,56)}" fill="none" stroke="#c2364f" stroke-width="2" stroke-dasharray="4 4"/>`;
+    } else if(kind==="provocations"){
+      g = `<ellipse cx="80" cy="104" rx="58" ry="14" fill="#c7e7f5"/><ellipse cx="80" cy="104" rx="40" ry="9" fill="#b3d8ef"/>`
+        + `<ellipse cx="80" cy="94" rx="30" ry="12" fill="${T.mint[1]}"/><ellipse cx="80" cy="91" rx="30" ry="10" fill="${T.mint[0]}"/>`
+        + `<ellipse cx="80" cy="74" rx="21" ry="9" fill="${T.lilac[1]}"/><ellipse cx="80" cy="71" rx="21" ry="8" fill="${T.lilac[0]}"/>`
+        + `<ellipse cx="80" cy="56" rx="13" ry="6" fill="${T.pink[1]}"/><ellipse cx="80" cy="54" rx="13" ry="5" fill="${T.pink[0]}"/>`;
+    } else if(kind==="excuses"){
+      const J = iso(80,104);
+      g = J.box(-6,-6,0,12,12,30,T.cream) + J.box(-34,-3,30,62,6,44,T.peach);
+      for(let k=0;k<4;k++){ const a=J.s(-26,3,64-k*9), b=J.s(16-k*6,3,64-k*9); g += `<polyline points="${a} ${b}" stroke="#22213f" stroke-width="3" stroke-linecap="round" opacity=".55"/>`; }
+    }
+    return g;
+  }
+};
+
+/* ---------- theory lookups ---------- */
+const SCP = {
+  effort:{label:"Increase effort", what:"Make the offence harder to carry out.", how:"Harden targets, control access, deflect offenders, control tools.", eg:"Rate limits on new accounts messaging young users."},
+  risk:{label:"Increase risk", what:"Make it more likely the offender is noticed or caught.", how:"Extend guardianship, assist natural surveillance, reduce anonymity, strengthen formal surveillance.", eg:"Flagging accounts whose location doesn’t match their profile."},
+  rewards:{label:"Reduce rewards", what:"Make the offence pay less, or not at all.", how:"Conceal or remove targets, disrupt markets, deny benefits.", eg:"Private follower lists; refusing to pay."},
+  provocations:{label:"Reduce provocations", what:"Ease the pressures and temptations that prompt offending.", how:"Reduce frustration and stress, neutralise peer pressure, discourage imitation.", eg:"Job pathways for unemployed graduates."},
+  excuses:{label:"Remove excuses", what:"Take away the rationalisations offenders use.", how:"Set rules, post instructions, alert conscience, assist compliance.", eg:"A warning to the sender: ‘This is sextortion. It is a crime.’"}
+};
+const ACTORS = {platform:"Platform", payment:"Payment provider", peer:"Peer / family", victim:"Victim", police:"Law enforcement", state:"State / Nigeria"};
+
+/* ---------- the script (case mapped to Leclerc’s stages) ---------- */
+const STAGES = [
+  {id:"prep", name:"Preparation", happens:"The offenders buy or share a ready-made script, stolen photos and fake accounts, and set up ways to receive money.",
+   ints:[
+    {actor:"state", scp:"provocations", text:"Job and enterprise pathways for unemployed graduates, shrinking the gap that makes fraud look like the only route to status."},
+    {actor:"state", scp:"excuses", text:"Public campaigns challenging the belief that scamming people overseas is harmless or victimless."},
+    {actor:"platform", scp:"effort", text:"Find and remove marketplaces selling scripts, aged accounts and stolen photo sets."}]},
+  {id:"entry", name:"Entry", happens:"They enter Instagram from fresh accounts and search for young men at US colleges, following many at once.",
+   ints:[
+    {actor:"platform", scp:"effort", text:"Limit how fast new accounts can follow and message young users, with extra checks for bulk behaviour."},
+    {actor:"platform", scp:"risk", text:"Flag accounts whose activity doesn’t match their claimed location, such as a ‘nearby college’ account run from elsewhere."}]},
+  {id:"pre", name:"Pre-condition", happens:"They settle on Alex: a public account with a visible follower list of family, teammates and classmates. That list is the leverage they will use later.",
+   ints:[
+    {actor:"platform", scp:"rewards", text:"Make follower lists private by default for new and young-adult accounts, concealing the leverage."},
+    {actor:"victim", scp:"rewards", text:"A privacy check: hide the follower list and limit who can message. An option, never an obligation."},
+    {actor:"peer", scp:"risk", text:"Friends, siblings or residential advisers who talk openly about sextortion, so it is recognised early."}]},
+  {id:"ipre", name:"Instrumental precondition", happens:"‘Maddie’, supposedly from a nearby college, follows Alex. Stolen photos, a handful of bought mutual followers. Alex follows back.",
+   ints:[
+    {actor:"platform", scp:"effort", text:"Detect reused or stolen profile photos on new accounts that claim a local college."},
+    {actor:"victim", scp:"effort", text:"A quick gut-check on new accounts: very new, few posts, mutuals you’ve never met."}]},
+  {id:"iinit", name:"Instrumental initiation", happens:"Flattery and fast intimacy. Then: ‘this app is glitchy, add me on [private app]’. Leaving the platform leaves its safety tools behind.",
+   ints:[
+    {actor:"platform", scp:"risk", text:"A gentle in-app warning when a new contact quickly asks to move to another app."},
+    {actor:"peer", scp:"risk", text:"Friends who know the pattern (fast compliments, then ‘switch apps’) and say so out loud."},
+    {actor:"victim", scp:"effort", text:"Keep new contacts on the original platform, where reporting tools exist."}]},
+  {id:"act", name:"Actualisation", happens:"The offender sends an image first (stolen), building trust and a sense of obligation. Alex sends one back.",
+   ints:[
+    {actor:"platform", scp:"effort", text:"On-device prompts that blur incoming nudity and ask ‘Are you sure?’ before sending to a new contact."},
+    {actor:"victim", scp:"effort", text:"Pause before sending to someone not yet met in person."}]},
+  {id:"doing", name:"Doing", happens:"An instant threat with a screenshot of Alex’s follower list: pay, or everyone sees it. Then the demand: gift cards or Cash App.",
+   ints:[
+    {actor:"victim", scp:"rewards", text:"Don’t pay. Screenshot the threat. Block. Report to the platform and police."},
+    {actor:"peer", scp:"rewards", text:"Someone Alex can tell without judgement: a friend, a parent, a residential adviser. Secrecy is the offender’s leverage."},
+    {actor:"platform", scp:"excuses", text:"Pattern detection that warns the sender: ‘This looks like sextortion. It is a crime.’"}]},
+  {id:"post", name:"Post-condition", happens:"Alex pays. The offenders cash out (gift card codes resold, money moved through other accounts). Then they demand more.",
+   ints:[
+    {actor:"payment", scp:"rewards", text:"Warnings and short holds when a young customer buys gift cards under time pressure or pays a new, unfamiliar payee."},
+    {actor:"payment", scp:"rewards", text:"Freeze and review accounts that receive reported sextortion payments."},
+    {actor:"police", scp:"risk", text:"Follow the money: trace payments and the accounts used to move them."}]},
+  {id:"exit", name:"Exit", happens:"When the money stops, the account is deleted. The script restarts with a new name and the next target.",
+   ints:[
+    {actor:"platform", scp:"risk", text:"Preserve evidence and share signals about linked accounts across platforms before deletion."},
+    {actor:"police", scp:"risk", text:"Cross-border investigation and prosecution in cooperation with Nigerian authorities."},
+    {actor:"victim", scp:"rewards", text:"Report image-based abuse (in Australia, to eSafety) so images can be removed even after the account disappears."}]}
+];
+
+const CHECK = ["Build ‘campus girl’ profile","Flatter, build fast intimacy","Move to a private app","Send an image first","Get an image back","Threaten with follower list","Demand payment","Demand more"];
+function scriptDoc(done, now, fail=[]){
+  return `<div class="scriptdoc" role="img" aria-label="The offenders’ script checklist. ${done.length} of ${CHECK.length} steps ticked.${fail.length?" Payment step failed.":""}">
+    <h3>SCRIPT: ‘Campus girl’ <small>offender’s view</small></h3>
+    <ol>${CHECK.map((c,i)=>{
+      const st = fail.includes(i) ? "fail" : now.includes(i) ? "now" : done.includes(i) ? "done" : "";
+      const mark = st==="fail" ? "✗" : st ? "✓" : "";
+      return `<li class="${st}"><span class="bx" aria-hidden="true">${mark}</span><span class="lbl">${c}</span><span class="sr">${st==="fail"?"(failed)":st?"(done)":"(not yet)"}</span></li>`;
+    }).join("")}</ol></div>`;
+}
+const range = n => Array.from({length:n},(_,i)=>i);
+function phone(app, sub, body){
+  return `<div class="phone" role="img" aria-label="Phone screen mock-up, ${app}: ${sub}."><div class="screen">
+    <div class="appbar"><span class="av" aria-hidden="true">M</span><span>${app}<small>${sub}</small></span></div>
+    <div class="msgs">${body}</div></div></div>`;
+}
+const imgIn = `<div class="b in"><div class="imgblur"><span>Photo · not shown</span></div></div>`;
+const imgOut = `<div class="b out"><div class="imgblur"><span>Photo sent · not shown</span></div></div>`;
+const followerShot = `<div class="b in threat"><div class="followers" aria-label="Screenshot of Alex’s follower list with names hidden"><div class="fh">Screenshot: Alex’s followers</div>${["Mom","Coach","Teammate","Roommate","Sister"].map(n=>`<div class="fr"><i></i><s></s><em>${n}</em></div>`).join("")}</div></div>`;
+
+/* ---------- scenes ---------- */
+const SCENES = [
+ {id:"cw", act:"Before you start", noNav:true, render:()=>`
+   <div class="split">
+     <div>
+       ${tags("warn")}
+       <h1>Before you play</h1>
+       <p class="lead">This game follows a <b>financially motivated sextortion</b> scam: offenders obtain an intimate image and then demand money.</p>
+       <p>It <b>references suicide risk</b> as a real-world harm. It never shows sexual images, explicit dialogue or self-harm. The case is a <b>fictional composite</b> based on published research: no real victims or offenders.</p>
+       <p>You can stop at any time. Support links stay at the bottom of every screen.</p>
+       <div class="btnrow">
+         <button class="btn" data-action="start">Start the game</button>
+         <button class="btn ghost" data-action="skip">I’d rather skip this (text summary)</button>
+       </div>
+     </div>
+     <div class="card" style="background:var(--mint)">
+       <h3>If this is close to home</h3>
+       <p>If someone is threatening to share an image of you: <b>don’t pay, keep evidence, block, and report</b>. It is not your fault.</p>
+       <p><b>Lifeline:</b> <a href="tel:131114">13 11 14</a> (24/7)<br><b>eSafety Commissioner:</b> <a href="https://www.esafety.gov.au" target="_blank" rel="noopener">esafety.gov.au</a> (image-based abuse reporting)</p>
+       <p class="small muted">Tutors: switch on <b>Tutor mode</b> (top right) for discussion pauses. Use <kbd>←</kbd> <kbd>→</kbd> to move between scenes.</p>
+     </div>
+   </div>`},
+
+ {id:"title", act:"Introduction", render:()=>`
+   <div class="split">
+     <div>
+       ${tags("concept|3026CCJ Fraud and Cybercrime")}
+       <h1>Understanding a crime script and situational crime prevention</h1>
+       <p class="lead">Watch a scam unfold step by step. Then rewind it and find every point where it could have been stopped.</p>
+       <ol class="small">
+         <li>Follow the offence through Leclerc’s crime script stages ${REF.leclerc.inText}.</li>
+         <li>Map situational crime prevention techniques onto each stage ${REF.scp.inText}.</li>
+       </ol>
+     </div>
+     <div class="art">${SVG.title()}</div>
+   </div>`},
+
+ /* ACT 1 */
+ {id:"a1-lagos", act:"Act 1 · The offenders", render:()=>`
+   <div class="split" style="grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr); gap:26px">
+     <div class="art">${SVG.lagos()}</div>
+     <div>
+       <div class="tags"><span class="tag fiction">Fictional narrative</span>${stage("Preparation")}</div>
+       <h2>Lagos, Nigeria</h2>
+       <p style="font-size:21px">Tobi, Kunle and Dayo are in their early twenties, with qualifications in accounting, computer science and marketing. None of them has found work.</p>
+       <p class="muted small">Composite characters, told through circumstance and opportunity.</p>
+       <div class="minidata">
+         <div class="stat"><span class="tag data" style="vertical-align:middle; margin-right:8px">Teachable moment</span><em>812</em> reports a week</div>
+         <p>Sextortion reports: the weekly average in the latest year of US tipline data analysed. Many reports use nearly identical language, as if from the same scripts: financial sextortion looks <b>organised</b>.</p>
+         ${cite("thornNcmec")}
+       </div>
+     </div>
+   </div>`},
+
+ {id:"a1-pull", act:"Act 1 · The offenders", render:()=>`
+   <div class="split rev">
+     <div>
+       <div class="tags"><span class="tag fiction">Fictional narrative</span>${stage("Preparation")}</div>
+       <h2>What pulls them in?</h2>
+       <p>Tap each factor to reveal it.</p>
+       ${choiceList("pull",[
+        ["1 · Blocked opportunity","Qualified, but shut out of jobs that match their training. The gap between what they were told to aim for and what is actually available is a form of <b>structural strain</b>."],
+        ["2 · Status","In their circle, visible spending (phones, clothes, nights out) signals success. A local subculture often called the <b>‘Yahoo Boys’</b> attaches prestige to online fraud."],
+        ["3 · Peer learning","Kunle’s cousin shows them the ropes. Techniques pass between friends like trade skills, rather than being invented alone."],
+        ["4 · Ready-made scripts","Message templates, fake profiles and how-to guides are <b>bought or shared online</b>. The crime arrives pre-written."]
+       ])}
+       <div class="cite"><p>Narrative informed by research on the ‘Yahoo Boys’ subculture. <b>In-text:</b> ${REF.adeniran.inText} &nbsp; <b>Reference:</b> ${REF.adeniran.full}</p></div>
+     </div>
+     <div class="art">${SVG.strain()}</div>
+   </div>`},
+
+ {id:"a1-script", act:"Act 1 · The offenders", render:()=>`
+   <div class="split">
+     <div>
+       <div class="tags"><span class="tag concept">Concept</span>${stage("Preparation")}</div>
+       <h2>A crime is a script</h2>
+       <p class="lead">A crime script breaks an offence into ordered stages, from <b>preparation</b> to <b>exit</b> ${REF.leclerc.inText}.</p>
+       <p>Preparation is everything before the offender enters the setting: here, buying a script, gathering stolen photos, creating accounts and lining up ways to get paid.</p>
+       <p>Every stage is a step the offenders <b>need</b> to complete. Every step is a place prevention can act.</p>
+       ${cite("leclerc")}
+     </div>
+     <div>${scriptDoc([],[])}<p class="small muted" style="margin-top:10px">The purchased script, ready to run. Watch it get ticked off in Act 3.</p></div>
+   </div>`},
+
+ {id:"a1-wci", act:"Act 1 · The offenders", render:()=>`
+   <div class="stat2" style="align-items:stretch">
+     <div class="datacard">
+       ${tags("data|Data card: offending")}
+       <div class="stat" style="font-size:42px">Nigeria ranks <em>#1 for scams</em></div>
+       <p>World Cybercrime Index, overall top six:</p>
+       <ol class="rankrow">${["Russia","Ukraine","China","USA","Nigeria","Romania"].map((c,i)=>`<li class="${c==="Nigeria"?"hl":""}"><b>${i+1}</b>${c}</li>`).join("")}</ol>
+       <p class="small">The USA is a top producer of cybercrime too. In this case it is where the targets are.</p>
+       ${cite("bruce")}
+     </div>
+     <div class="datacard" style="border-top-color:#f2a5bd">
+       ${tags("data|Data card: sextortion")}
+       <div class="stat" style="font-size:42px"><em>47%</em> of reports linked to a country point to Nigeria or Côte d’Ivoire</div>
+       <p class="small">The linked country often, but not always, marks where the offender is.</p>
+       <p class="small muted">Rankings describe where offending is concentrated. They say nothing about the people who live there.</p>
+       ${cite("thornNcmec")}
+     </div>
+   </div>`},
+
+ {id:"a1-pause", act:"Act 1 · Tutor pause", tutorOnly:true, render:()=>tutorPause("Discuss: strain, choice, or both?",[
+   "Is this a story of strain, rational choice, or both? What in the scenes supports each reading?",
+   "What would have to change in Lagos for this script never to be bought?",
+   "Which of the four ‘pull’ factors could a platform influence, and which only a government could?"])},
+
+ /* ACT 2 */
+ {id:"a2-why", act:"Act 2 · Target selection", render:()=>`
+   <div class="split">
+     <div class="art">${SVG.map()}</div>
+     <div>
+       <div class="tags"><span class="tag fiction">Fictional narrative</span>${stage("Entry")}</div>
+       <h2>Why target the USA?</h2>
+       <p>The offenders weigh it up. Tap each factor.</p>
+       ${choiceList("why",[
+        ["Payment apps","Instant peer-to-peer apps and gift cards move money fast, and gift card codes can be resold."],
+        ["Time zones","Their night shift lines up with American evenings, when students are online, alone and relaxed."],
+        ["English","A shared language means the script works without translation. Odd phrasing passes as ‘texting style’."],
+        ["Shame and silence","They believe young men will be too ashamed to tell anyone or report. That belief shapes who they choose."]
+       ])}
+     </div>
+   </div>`},
+
+ {id:"a2-alex", act:"Act 2 · Target selection", render:()=>`
+   <div class="split rev">
+     <div>
+       <div class="tags"><span class="tag fiction">Fictional narrative</span>${stage("Pre-condition")}</div>
+       <h2>Meet Alex</h2>
+       <p class="lead">19. First-year college student. A few weeks into semester, still meeting people.</p>
+       <p class="lead">His Instagram is public. His follower list shows his mom, his coach, his teammates, his roommate, his sister.</p>
+       <p>To the offenders, that is <b>leverage</b>.</p>
+     </div>
+     <div class="art">${SVG.campus()}</div>
+   </div>`},
+
+ {id:"a2-ncmec", act:"Act 2 · Target selection", render:()=>`
+   <div class="datacard">
+     ${tags("data")}
+     <div class="stat"><em>90%</em> of minor victims in sextortion reports were boys aged 14–17</div>
+     <p class="lead">Offenders deliberately target young males because they think boys are less likely to report.</p>
+     ${cite("thornNcmec")}
+   </div>`},
+
+ {id:"a2-dark", act:"Act 2 · Target selection", render:()=>`
+   <div class="datacard">
+     ${tags("data")}
+     <div class="stat">There is <em>no global victimisation index</em></div>
+     <div class="stat2">
+       <div><p class="lead">We can rank where offending is concentrated. We can’t do the same for victims. Offences that never reach police records make up the <b>dark figure</b> of crime.</p>
+       <p>Victim surveys, such as Wolak and Finkelhor’s survey of 1,631 sextortion victims, are one way to see past official records ${REF.wolak.inText}.</p></div>
+       <div class="card" style="background:var(--sky); box-shadow:none"><div class="stat"><em>16%</em> of victims never told anyone</div><p class="small" style="margin:0">Thorn’s 2025 survey of young people ${REF.thorn2025.inText}.</p></div>
+     </div>
+     ${cite("wolak","thorn2025")}
+   </div>`},
+
+ {id:"a2-pause", act:"Act 2 · Tutor pause", tutorOnly:true, render:()=>tutorPause("Discuss: who could change the odds?",[
+   "Which of the offenders’ four reasons (payment apps, time zones, English, shame) could prevention change? Who would have to act?",
+   "The offenders’ belief that young men won’t report: how could that belief itself be undermined?",
+   "What does the dark figure mean for how we judge whether prevention ‘works’?"])},
+
+ /* ACT 3 */
+ {id:"a3-1", act:"Act 3 · The script", auto:true, render:()=>act3(
+   "Instrumental precondition","A follow request",
+   "‘Maddie’ says she’s at a college nearby. The photos are stolen. The mutual followers are bought. Alex follows back.",
+   `<div class="profilecard"><div class="big">${SVG.avatar()}</div><div class="nm">maddie.k</div><div class="meta">Student · [nearby college]</div><div class="stats"><span><b>3</b> posts</span><span><b>12</b> mutuals</span></div><span class="pill">Follow back</span></div>`,
+   [], [0], "Instagram")},
+
+ {id:"a3-2", act:"Act 3 · The script", auto:true, render:()=>act3(
+   "Instrumental initiation","Fast intimacy",
+   "Compliments come quickly. She remembers everything he says. Within an hour it feels like they have known each other for weeks.",
+   `<div class="b in">wait you play soccer?? that’s so cool</div><div class="b out">haha yeah, just intramural</div><div class="b in">you’re honestly so easy to talk to</div><div class="b in">most guys here are boring lol</div><div class="b out">ha thanks 😅</div>`,
+   [0], [1], "Instagram")},
+
+ {id:"a3-3", act:"Act 3 · The script", auto:true, render:()=>act3(
+   "Instrumental initiation","Switching apps",
+   "The move to a private messaging app is the turning point. The platform’s reporting and safety tools stay behind.",
+   `<div class="b in">this app keeps glitching</div><div class="b in">add me on [private app]? it’s easier</div><div class="b out">sure, what’s your handle</div><div class="b sys">Conversation moved to another app</div>`,
+   [0,1], [2], "Instagram")},
+
+ {id:"a3-4", act:"Act 3 · The script", auto:true, render:()=>act3(
+   "Actualisation","An image exchange",
+   "The offender sends an image first (a stolen one) to build trust and a sense of obligation. Alex sends one back. Nothing is shown here.",
+   `${imgIn}<div class="b in">your turn 🙈</div>${imgOut}`,
+   [0,1,2], [3,4], "[private app]")},
+
+ {id:"a3-5", act:"Act 3 · The script", auto:true, render:()=>act3(
+   "Doing","The threat",
+   "Seconds later, the tone flips. The offender sends back a screenshot of Alex’s own follower list.",
+   `${followerShot}<div class="b in threat">I have your photo. I have everyone you know.</div><div class="b in threat">Pay now or they all see it.</div>`,
+   [0,1,2,3,4], [5], "[private app]")},
+
+ {id:"a3-6", act:"Act 3 · The script", auto:true, render:()=>act3(
+   "Doing → Post-condition","Pay, then pay again",
+   "The demand: gift cards or Cash App, right now. Panicking, Alex pays. Minutes later, a new message.",
+   `<div class="b in threat">Gift card codes or Cash App. You have 1 hour.</div><div class="b out">ok I sent it. please delete it</div><div class="b in threat">Not enough. Send more.</div>`,
+   [0,1,2,3,4,5], [6,7], "[private app]")},
+
+ {id:"a3-exit", act:"Act 3 · The script", render:()=>`
+   <div class="act3grid">
+     <div>${scriptDoc(range(8),[])}<p class="small muted" style="margin-top:10px">Script complete. Reset. Next name on the list.</p></div>
+     <div>
+       <div class="tags"><span class="tag fiction">Fictional narrative</span>${stage("Post-condition → Exit")}</div>
+       <h2>Exit, and repeat</h2>
+       <p class="narr">The offenders cash out: gift card codes resold, money passed through other accounts. When the payments stop, the account is deleted.</p>
+       <p class="narr">The script is reusable. Tomorrow it runs again with a new name.</p>
+       <p class="narr">Alex is left alone with fear, shame and a demand that hasn’t ended.</p>
+     </div>
+   </div>`},
+
+ {id:"a3-risk", act:"Act 3 · The script", render:()=>`
+   <div class="datacard" style="border-top-color:#f2a5bd">
+     ${tags("data|Data card: speed and real-world risk")}
+     <div class="stat2">
+       <div><div class="stat"><em>30%</em> of victims faced demands within 24 hours</div><p class="small">of first contact ${REF.thorn2025.inText}. The speed in Act 3 is not exaggerated.</p></div>
+       <div><div class="stat" style="font-size:36px">In extreme cases, sextortion has ended in suicide</div><p class="small">The impact on young victims can be devastating, and paying the offenders can simply lead to more demands ${REF.thornNcmec.inText2}.</p></div>
+     </div>
+     <div class="note" style="background:var(--mint); margin-top:4px">If this is close to home: it is not your fault, and help is available now. <b>Lifeline <a href="tel:131114">13 11 14</a></b> (24/7). Report image-based abuse at <a href="https://www.esafety.gov.au" target="_blank" rel="noopener">esafety.gov.au</a>.</div>
+     ${cite("thorn2025","thornNcmec")}
+   </div>`},
+
+ {id:"a3-pause", act:"Act 3 · Tutor pause", tutorOnly:true, render:()=>tutorPause("Discuss: where was no one watching?",[
+   "At which steps did the offenders need Alex to do something? At which steps did they need nothing from him?",
+   "Where in the script did no one else see what was happening? Why there?",
+   "Which step did the offenders control completely? What does that tell us about where to intervene?"])},
+
+ /* ACT 4 */
+ {id:"a4-intro", act:"Act 4 · Rewind", render:()=>`
+   <div class="split rev" style="grid-template-columns:minmax(0,1.25fr) minmax(0,1fr)">
+     <div>
+       ${tags("concept")}
+       <h2>Rewind. What could have been different?</h2>
+       <p class="lead">Same script, nine stages. Situational crime prevention asks one practical question at each stage: <b>how could the setting change so this step stops working?</b></p>
+       <p>It changes the moment of decision, not the offender: making a step harder, riskier, less rewarding, less provoking or harder to excuse ${REF.scp.inText}. Each intervention is tagged by <b>who</b> could deliver it and <b>which technique</b> it uses.</p>
+       <p class="note small">Options that Alex had are listed so we can see the whole system. <b>Nothing Alex did makes this his fault.</b> The offence belongs to the offenders.</p>
+     </div>
+     <div class="art">${SVG.scpOverview()}</div>
+   </div>`},
+
+ {id:"a4-scp", act:"Act 4 · Rewind", render:()=>`
+   ${tags("concept")}
+   <h2 style="margin-bottom:.2em">Situational crime prevention: five techniques</h2>
+   <p style="margin-bottom:6px; font-size:19px">Situational prevention changes the <b>setting</b> of a crime rather than the offender’s character.</p>
+   <div class="scpgrid">${Object.entries(SCP).map(([k,v])=>`<article class="scp">${SVG.scpIcon(k)}<h3>${v.label}</h3><p>${v.what}</p><p class="muted" style="font-size:15px">${v.how}</p><p class="eg"><b>In this case:</b> ${v.eg}</p></article>`).join("")}</div>
+   <div style="margin-top:-6px">${cite("scp")}</div>`},
+
+ {id:"a4-timeline", act:"Act 4 · Rewind", render:()=>`
+   <div style="display:flex; flex-wrap:wrap; align-items:baseline; gap:6px 16px">
+     <h2 style="margin:0">Tap a stage</h2>
+     <span class="kbdhint">Presenting? Press <kbd>1</kbd> to <kbd>9</kbd> to jump between stages.</span>
+     <span class="explored" id="exploredCount"></span>
+   </div>
+   <div class="lens" role="group" aria-label="Filter by situational crime prevention technique">
+     <span>Technique:</span>
+     ${[["all","All"],...Object.entries(SCP).map(([k,v])=>[k,v.label])].map(([k,l])=>`<button data-lens="${k}" aria-pressed="${state.lens===k}">${l}</button>`).join("")}
+   </div>
+   <div class="tl-wrap"><div class="tl" role="group" aria-label="Crime script stages">
+     ${STAGES.map((s,i)=>`<button data-stage="${i}" aria-pressed="${state.sel===i}"><span class="dot">${i+1}</span><span class="nm">${s.name}</span><span class="seen"></span></button>`).join("")}
+   </div></div>
+   <div id="stagePanel"></div>`,
+   mount: ()=>{ updateTimeline(); }},
+
+ {id:"a4-guardian", act:"Act 4 · Tutor pause", tutorOnly:true, render:()=>tutorPause("Discuss: reading the techniques",[
+   "Filter by <b>Reduce rewards</b>. Which is the earliest stage where the payoff could be cut? Who would do it?",
+   "Most interventions here belong to companies (platforms, payment providers). What are the risks of relying on private actors to prevent crime?",
+   "Look at the interventions delivered by the <b>victim</b>. Where does responsibility start to slide onto Alex? How do we offer options without blame?"])},
+
+ {id:"a4-vote", act:"Act 4 · Rewind", render:()=>`
+   ${tags("concept|Vote")}
+   <h2>Which single intervention would break this script earliest?</h2>
+   <p>${state.tutor ? "<b>Vote now</b>: show of hands, or your class polling tool. Then reveal the discussion." : "Pick one, then read the discussion prompts."}</p>
+   <div class="vote" role="group" aria-label="Vote options">
+     ${VOTE.map((v,i)=>`<button class="vopt" data-vote="${i}" aria-pressed="${state.vote===i}"><span class="L">${"ABCD"[i]}</span><span>${v.text}<small>${STAGES[v.stage].name} · ${ACTORS[v.actor]} · ${SCP[v.scp].label}</small></span></button>`).join("")}
+   </div>
+   <div id="voteOut">${state.vote!==null || state.voteReveal ? voteDiscussion() : (state.tutor?`<div class="btnrow"><button class="btn ghost" data-action="revealVote">Reveal discussion</button></div>`:"")}</div>`},
+
+ {id:"a4-alt", act:"Act 4 · Rewind", render:()=>altEnding()},
+
+ {id:"a4-advice", act:"Act 4 · Rewind", render:()=>`
+   <div class="datacard" style="border-top-color:#ade5d2">
+     ${tags("data|Data card: what to do")}
+     <div class="advice">
+       <div><b>Don’t pay</b>Payment didn’t end it for Alex.</div>
+       <div><b>Report</b>To the platform and to police.</div>
+       <div><b>Block</b>After keeping screenshots.</div>
+     </div>
+     <p class="lead">And tell someone you trust. In Australia, image-based abuse can be reported to the eSafety Commissioner at <a href="https://www.esafety.gov.au/key-topics/image-based-abuse/deal-with-sextortion" target="_blank" rel="noopener">esafety.gov.au</a>.</p>
+     ${cite("esafety")}
+   </div>`},
+
+ /* ACT 5 */
+ {id:"a5-diagram", act:"Act 5 · Debrief", render:()=>`
+   ${tags("concept|Summary diagram")}
+   <h2>Crime script × situational crime prevention × interventions</h2>
+   <p class="small" style="margin-bottom:8px">Columns are script stages; rows are the five techniques; each label is who could deliver that intervention. Read across a row to see where one technique can work, and down a column to see how many levers a stage offers. Empty cells are worth discussing too.</p>
+   <div class="mx-wrap"><div class="mx" role="table" aria-label="Matrix of crime script stages by situational crime prevention technique, listing who delivers each intervention">
+     <div role="columnheader"><span class="sr">Technique</span></div>
+     ${STAGES.map((s,i)=>`<div class="h" role="columnheader"><b>Stage ${i+1}</b>${s.name}</div>`).join("")}
+     ${Object.keys(SCP).map(k=>`<div class="r ${k}" role="rowheader">${SCP[k].label}</div>`+
+       STAGES.map(s=>{const hits=s.ints.filter(x=>x.scp===k); return hits.length?`<div class="c" role="cell">${[...new Set(hits.map(h=>h.actor))].map(a=>{const n=hits.filter(h=>h.actor===a); return `<span title="${n.map(h=>h.text.replace(/"/g,"&quot;")).join(" | ")}">${ACTORS[a]}${n.length>1?` ×${n.length}`:""}</span>`;}).join("")}</div>`:`<div class="c empty" role="cell"><span class="sr">none</span></div>`}).join("")
+     ).join("")}
+   </div></div>
+`},
+
+ {id:"a5-reflect", act:"Act 5 · Debrief", render:()=>`
+   ${tags("concept|Portfolio reflection")}
+   <h2>Three questions for your portfolio</h2>
+   <ol class="reflect lead" id="reflectList">${REFLECT.map(q=>`<li>${q}</li>`).join("")}</ol>
+   <div class="btnrow"><button class="btn ghost" data-action="copyReflect">Copy questions</button><span id="copyMsg" class="small muted" role="status" aria-live="polite"></span></div>
+   <p class="small muted">Nothing you do in this game is recorded or sent anywhere.</p>`},
+
+ {id:"a5-refs", act:"Act 5 · Debrief", render:()=>`
+   ${tags("concept|References")}
+   <h2>References</h2>
+   <ul class="refs">${REFS.map(r=>`<li>${ph(r)}</li>`).join("")}</ul>
+   <p class="small muted"><i>Case note: Alex, Maddie, Tobi, Kunle and Dayo are fictional. The case is a composite based on published research. On-screen statistics come from the sources above; everything else is marked as fictional narrative or concept.</i></p>`},
+
+ {id:"a5-end", act:"The end", render:()=>`
+   <div class="split">
+     <div>
+       <h1>Script, rewound.</h1>
+       <p class="lead">The offenders needed nine stages to go their way. Prevention only needed one to go differently.</p>
+       <div class="btnrow"><button class="btn" data-action="restart">Play again</button><button class="btn ghost" data-goto="a4-timeline">Back to the timeline</button></div>
+     </div>
+     <div class="art">${SVG.finale()}</div>
+   </div>`}
+];
+
+const VOTE = [
+  {stage:1, actor:"platform", scp:"risk", text:"Flag accounts whose activity doesn’t match their claimed ‘nearby college’ location."},
+  {stage:2, actor:"platform", scp:"rewards", text:"Make follower lists private by default for new and young-adult accounts."},
+  {stage:4, actor:"platform", scp:"risk", text:"Warn users when a new contact quickly asks to move to another app."},
+  {stage:7, actor:"payment", scp:"rewards", text:"Warn and briefly hold pressured gift card purchases and payments to new payees."}
+];
+const REFLECT = [
+  "Choose one stage of the script. Which situational crime prevention technique would do most to stop the offence at that stage, who would deliver it, and why?",
+  "Pick two interventions delivered by different actors. Which situational crime prevention technique does each use, and what displacement or unintended consequences might follow, including for victims’ willingness to report?",
+  "The offenders were described through structure and opportunity rather than nationality. Why does that matter for prevention, and what would a Preparation-stage intervention in Lagos need to address?"
+];
+
+/* ---------- scene builders ---------- */
+function choiceList(key, items){
+  state.choices[key] = state.choices[key] || new Set();
+  return `<div class="choices">${items.map(([q,a],i)=>`<button class="choice" data-choice="${key}:${i}" aria-expanded="${state.choices[key].has(i)}"><span class="q">${q}</span><span class="a">${a}</span></button>`).join("")}</div>
+  ${state.tutor?`<div class="btnrow"><button class="btn ghost" data-revealall="${key}:${items.length}">Reveal all</button></div>`:""}`;
+}
+function tutorPause(title, qs){
+  return `<div class="card" style="background:linear-gradient(135deg,#2d2a5a,#4a3f86); color:#fff; padding:34px">
+    <div class="tags"><span class="tag" style="background:var(--accent); color:#fff">Tutor pause</span></div>
+    <h2>${title}</h2>
+    <ol class="lead">${qs.map(q=>`<li style="margin-bottom:12px">${q}</li>`).join("")}</ol>
+    <p class="small" style="opacity:.85">Take a few minutes. Press <kbd>→</kbd> when ready.</p></div>`;
+}
+function act3(stageName, title, narr, screen, done, now, app){
+  const isProfile = screen.includes("profilecard");
+  return `<div class="autobar" id="autobar" aria-hidden="true"><i></i></div>
+  <div class="act3grid">
+    <div>${isProfile ? `<div class="phone" role="img" aria-label="Phone screen: an Instagram follow request from ‘maddie.k’, a profile claiming to be a student at a nearby college, with 3 posts and 12 mutual followers."><div class="screen"><div class="appbar"><span class="av" aria-hidden="true">A</span><span>${app}<small>Alex’s notifications</small></span></div>${screen}</div></div>` : phone(app, "Chat with maddie.k", screen)}</div>
+    <div>
+      <div class="tags"><span class="tag fiction">Fictional narrative</span>${stage(stageName)}</div>
+      <h2>${title}</h2>
+      <p class="narr">${narr}</p>
+      ${scriptDoc(done, now)}
+    </div>
+  </div>`;
+}
+const ALT = [
+  ["Doesn’t pay","The demand gets no money. The script’s payoff step fails."],
+  ["Screenshots everything","The threat, the account name, the follower-list screenshot. Evidence first."],
+  ["Blocks the account","After saving the evidence, contact is cut off."],
+  ["Reports to the platform","The account can be reviewed and removed, and linked accounts flagged."],
+  ["Reports to police","The payment details and account information can be followed up."],
+  ["Tells someone","His roommate. Secrecy was the offenders’ leverage, and now it’s gone."]
+];
+function altEnding(){
+  const n = state.alt, done = n>=ALT.length;
+  return `<div class="split">
+    <div>
+      <div class="tags"><span class="tag fiction">Fictional narrative: alternative ending</span>${stage("Doing")}</div>
+      <h2>Rewind to the threat. This time…</h2>
+      <ol class="steps">${ALT.map(([t,d],i)=>`<li class="${i<n?"":"todo"}"><span class="n">${i<n?"✓":i+1}</span><span><b>${t}.</b> ${i<n?d:""}</span></li>`).join("")}</ol>
+      ${done?"":`<div class="btnrow" style="margin-top:12px"><button class="btn" data-action="altNext">${n===0?"Show what Alex does":"Next action"}</button></div>`}
+    </div>
+    <div>${done?`<div class="art">${SVG.alt()}</div><p class="lead" style="margin-top:14px">The offenders move on. In this ending the script stalls at <b>Doing</b>: no payment, no leverage, an account under review.</p>`:scriptDoc(range(6),[], n>0?[6]:[])}</div>
+  </div>`;
+}
+function voteDiscussion(){
+  return `<div class="card" style="margin-top:16px">
+    <h3>Discuss</h3>
+    <ul style="margin:0">
+      <li>Earliest is not the same as most effective. Would the offenders simply <b>displace</b> to another platform, another app or another target?</li>
+      <li>Who pays for each option, and who decides? Which would a platform resist, and why?</li>
+      <li>A and C <b>increase risk</b>; B and D <b>reduce rewards</b>. Which technique do you trust more here, and why?</li>
+    </ul></div>`;
+}
+
+/* ---------- timeline ---------- */
+function updateTimeline(){
+  const panel = document.getElementById("stagePanel");
+  if(!panel) return;
+  document.querySelectorAll(".tl button").forEach(b=>{
+    const i=+b.dataset.stage, s=STAGES[i];
+    b.setAttribute("aria-pressed", state.sel===i);
+    const has = state.lens==="all" || s.ints.some(x=>x.scp===state.lens);
+    b.classList.toggle("dim", !has);
+    b.querySelector(".seen").textContent = state.explored.has(i) ? "✓ explored" : "";
+    b.setAttribute("aria-label", `Stage ${i+1}: ${s.name}${state.explored.has(i)?", explored":""}${has?"":", no interventions using this technique"}`);
+  });
+  document.querySelectorAll(".lens button").forEach(b=>b.setAttribute("aria-pressed", state.lens===b.dataset.lens));
+  document.getElementById("exploredCount").textContent = `${state.explored.size} of 9 stages explored`;
+  if(state.sel===null){ panel.innerHTML = `<div class="panel"><p class="lead" style="margin:0">Start at stage 1, or jump to the stage where you think the script was most vulnerable.</p></div>`; return; }
+  const s = STAGES[state.sel];
+  panel.innerHTML = `<div class="panel" aria-live="polite">
+    <h3>${state.sel+1}. ${s.name}</h3>
+    <div class="happens"><b>What happened:</b> ${s.happens}</div>
+    <p class="small muted" style="margin:0 0 10px">Possible interventions, for discussion.</p>
+    <div class="ints">${s.ints.map(x=>{
+      const dim = state.lens!=="all" && x.scp!==state.lens;
+      return `<div class="int ${dim?"dim":""}">
+        <div class="badges"><span class="bdg actor">${ACTORS[x.actor]}</span><span class="bdg scp">${SCP[x.scp].label}</span></div>
+        <p>${x.text}</p>
+      </div>`;}).join("")}</div>
+    ${state.tutor?`<p class="note small" style="margin-bottom:0"><b>Tutor prompt:</b> Which of these would the offenders find hardest to work around at the ‘${s.name}’ stage? Who is missing from this list?</p>`:""}
+  </div>`;
+}
+
+/* ---------- engine ---------- */
+const state = {tutor:false, idx:0, sel:null, lens:"all", explored:new Set(), choices:{}, vote:null, voteReveal:false, alt:0, paused:false, summary:false};
+const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+let flow = [], timer = null;
+const $ = id => document.getElementById(id);
+const stageEl = $("stage");
+function buildFlow(){ flow = SCENES.filter(s => !s.tutorOnly || state.tutor); }
+function current(){ return flow[state.idx]; }
+function navVisible(on){ ["backBtn","nextBtn"].forEach(id=>{ $(id).style.display = on ? "" : "none"; }); }
+
+function render(focus=true){
+  clearTimeout(timer);
+  if(state.summary){ renderSummary(); return; }
+  const s = current();
+  stageEl.innerHTML = `<div class="scene" data-id="${s.id}">${s.render()}</div>`;
+  if(s.mount) s.mount();
+  $("actLabel").textContent = s.act;
+  const pct = Math.round(state.idx/(flow.length-1)*100);
+  $("progress").style.width = pct+"%";
+  $("progressWrap").setAttribute("aria-valuenow", pct);
+  navVisible(true);
+  $("backBtn").disabled = state.idx===0;
+  $("nextBtn").disabled = state.idx===flow.length-1 || !!s.noNav;
+  $("nextBtn").style.visibility = s.noNav ? "hidden" : "visible";
+  $("backBtn").style.visibility = s.noNav ? "hidden" : "visible";
+  setupAuto(s);
+  stageEl.scrollTop = 0;
+  if(focus){ const h = stageEl.querySelector("h1,h2"); if(h){ h.setAttribute("tabindex","-1"); h.focus({preventScroll:true}); } }
+}
+
+const AUTO_MS = 11000;
+let timerStart=0, timerLeft=0;
+function setupAuto(s){
+  const btn = $("autoBtn"), bar = $("autobar");
+  const on = s.auto && !state.tutor && !reduceMotion;
+  btn.classList.toggle("show", !!on);
+  if(!on){ if(bar) bar.style.display="none"; return; }
+  btn.textContent = state.paused ? "Resume auto-play" : "Pause auto-play";
+  btn.setAttribute("aria-pressed", state.paused);
+  bar.classList.add("run");
+  bar.querySelector("i").style.animationDuration = AUTO_MS+"ms";
+  if(state.paused){ bar.classList.add("paused"); return; }
+  bar.classList.remove("paused");
+  startTimer(AUTO_MS);
+}
+function startTimer(ms){ clearTimeout(timer); timerStart=Date.now(); timerLeft=ms; timer=setTimeout(()=>{ if(!state.summary && current().auto) next(); }, ms); }
+function go(i){ if(i<0||i>=flow.length) return; state.idx=i; render(); }
+function next(){ go(state.idx+1); }
+function prev(){ go(state.idx-1); }
+function goId(id){ state.summary=false; const i=flow.findIndex(s=>s.id===id); if(i>=0) go(i); }
+
+function setTutor(on){
+  const id = state.summary ? null : current().id;
+  state.tutor = on; buildFlow();
+  $("tutorBtn").setAttribute("aria-pressed", on);
+  $("tutorState").textContent = on ? "on" : "off";
+  if(id){
+    let i = flow.findIndex(s=>s.id===id);
+    if(i<0){ const orig = SCENES.findIndex(s=>s.id===id); i = flow.findIndex(s=>SCENES.indexOf(s)>orig); }
+    state.idx = Math.max(0,i);
+    render(false);
+  }
+}
+
+function renderSummary(){
+  $("actLabel").textContent = "Text summary";
+  $("progress").style.width = "0";
+  navVisible(false); $("autoBtn").classList.remove("show");
+  stageEl.innerHTML = `<div class="scene summary">
+    ${tags("concept|Text-only summary")}
+    <h1>Summary: understanding a sextortion script</h1>
+    <p class="lead">This is a text version of the game’s content, without the story scenes. The case is a fictional composite based on published research.</p>
+    <section><h2>Learning goals</h2>
+      <ol><li>Understand crime scripts ${REF.leclerc.inText}: preparation, entry, pre-condition, instrumental precondition, instrumental initiation, actualisation, doing, post-condition, exit.</li>
+      <li>Map situational crime prevention techniques ${REF.scp.inText} onto each stage.</li></ol></section>
+    <section><h2>The case in brief</h2>
+      <p>Three unemployed graduates in Lagos, drawn by structural strain, status within a local fraud subculture ${REF.adeniran.inText}, peer learning and ready-made scripts, run a financially motivated sextortion scam. They target young men in the USA because of payment apps, overlapping hours, a shared language, and their assumption that young men are too ashamed to report. Using a fake profile of a student at a nearby college, they befriend Alex, 19, build fast intimacy, move him to a private app, exchange images, then threaten to send his image to everyone on his follower list unless he pays. After the first payment they demand more.</p></section>
+    <section><h2>Key data</h2>
+      <ul><li>World Cybercrime Index overall top six: Russia, Ukraine, China, USA, Nigeria, Romania. Nigeria ranks #1 for scams. The USA is a top producer too ${REF.bruce.inText}.</li>
+      <li>An average of 812 sextortion reports a week, many using nearly identical language, as if from shared scripts ${REF.thornNcmec.inText}.</li>
+      <li>47% of reports linked to a country point to Nigeria or Côte d’Ivoire; the linked country often, but not always, marks the offender’s location ${REF.thornNcmec.inText}.</li>
+      <li>90% of minor victims in sextortion reports were boys aged 14–17; offenders deliberately target young males, believing boys are less likely to report ${REF.thornNcmec.inText}.</li>
+      <li>There is no global victimisation index, and many offences never reach official records: the dark figure of crime ${REF.wolak.inText}. 16% of victims never told anyone ${REF.thorn2025.inText}.</li>
+      <li>30% of victims faced demands within 24 hours of first contact ${REF.thorn2025.inText}.</li>
+      <li>In extreme cases, sextortion has ended in suicide, and paying can simply lead to more demands ${REF.thornNcmec.inText2}.</li></ul></section>
+    <section><h2>Situational crime prevention</h2>
+      <ul>${Object.values(SCP).map(v=>`<li><b>${v.label}:</b> ${v.what} ${v.how}</li>`).join("")}</ul></section>
+    <section><h2>Interventions by stage</h2>
+      ${STAGES.map((s,i)=>`<h3>${i+1}. ${s.name}</h3><p>${s.happens}</p><ul>${s.ints.map(x=>`<li><b>${ACTORS[x.actor]}</b> (${SCP[x.scp].label}): ${x.text}</li>`).join("")}</ul>`).join("")}</section>
+    <section><h2>What to do</h2><p><b>Don’t pay. Report. Block.</b> Keep screenshots first, and tell someone you trust. In Australia, report image-based abuse at <a href="https://www.esafety.gov.au" target="_blank" rel="noopener">esafety.gov.au</a> ${REF.esafety.inText}.</p></section>
+    <section><h2>Reflection questions</h2><ol>${REFLECT.map(q=>`<li>${q}</li>`).join("")}</ol></section>
+    <section><h2>References</h2><ul class="refs">${REFS.map(r=>`<li>${ph(r)}</li>`).join("")}</ul></section>
+    <div class="btnrow"><button class="btn ghost" data-action="restart">Back to the start</button></div>
+  </div>`;
+  const h=stageEl.querySelector("h1"); h.setAttribute("tabindex","-1"); h.focus();
+}
+
+/* ---------- copy to clipboard (works on file://, https and in embedded previews) ---------- */
+function legacyCopy(txt){
+  const ta=document.createElement("textarea");
+  ta.value=txt; ta.setAttribute("readonly",""); ta.style.position="fixed"; ta.style.top="0"; ta.style.left="0"; ta.style.opacity="0";
+  document.body.appendChild(ta); ta.focus(); ta.select(); ta.setSelectionRange(0, txt.length);
+  let ok=false; try{ ok=document.execCommand("copy"); }catch(e){ ok=false; }
+  ta.remove(); return ok;
+}
+async function copyText(txt){
+  if(navigator.clipboard && window.isSecureContext){
+    try{ await navigator.clipboard.writeText(txt); return true; }catch(e){ /* fall through */ }
+  }
+  return legacyCopy(txt);
+}
+async function copyReflect(btn){
+  const txt = "3026CCJ Crime script and situational crime prevention: portfolio reflection questions\n\n" + REFLECT.map((q,i)=>`${i+1}. ${q}`).join("\n\n");
+  const ok = await copyText(txt);
+  const msg = $("copyMsg");
+  if(ok){ msg.textContent = "Copied to your clipboard."; btn.textContent = "Copied ✓"; setTimeout(()=>{ btn.textContent="Copy questions"; }, 2500); }
+  else {
+    const list=$("reflectList"), r=document.createRange(); r.selectNodeContents(list);
+    const sel=window.getSelection(); sel.removeAllRanges(); sel.addRange(r);
+    msg.textContent = "Your browser blocked copying. The questions are selected: press Ctrl+C (or ⌘C) to copy.";
+  }
+}
+
+/* ---------- events ---------- */
+document.addEventListener("click", e=>{
+  const t = e.target.closest("button,[data-goto]");
+  if(!t) return;
+  if(t.id==="nextBtn") return next();
+  if(t.id==="backBtn") return prev();
+  if(t.id==="tutorBtn") return setTutor(!state.tutor);
+  if(t.id==="restartBtn") return restart();
+  if(t.id==="autoBtn"){
+    state.paused = !state.paused;
+    const bar=$("autobar");
+    if(state.paused){ clearTimeout(timer); timerLeft -= Date.now()-timerStart; bar && bar.classList.add("paused"); }
+    else { bar && bar.classList.remove("paused"); startTimer(Math.max(timerLeft,1500)); }
+    t.textContent = state.paused ? "Resume auto-play" : "Pause auto-play";
+    t.setAttribute("aria-pressed", state.paused);
+    return;
+  }
+  const a = t.dataset.action;
+  if(a==="start") return next();
+  if(a==="skip"){ state.summary=true; return render(); }
+  if(a==="restart") return restart();
+  if(a==="altNext"){ state.alt++; render(false); const b=stageEl.querySelector('[data-action="altNext"]'); (b||stageEl.querySelector("h2")).focus(); return; }
+  if(a==="revealVote"){ state.voteReveal=true; $("voteOut").innerHTML = voteDiscussion(); return; }
+  if(a==="copyReflect"){ copyReflect(t); return; }
+  if(t.dataset.goto) return goId(t.dataset.goto);
+  if(t.dataset.choice){
+    const [k,i] = t.dataset.choice.split(":"); const set = state.choices[k]; const n=+i;
+    set.has(n) ? set.delete(n) : set.add(n);
+    t.setAttribute("aria-expanded", set.has(n)); return;
+  }
+  if(t.dataset.revealall){
+    const [k,n] = t.dataset.revealall.split(":");
+    for(let i=0;i<+n;i++) state.choices[k].add(i);
+    document.querySelectorAll(`[data-choice^="${k}:"]`).forEach(b=>b.setAttribute("aria-expanded","true")); return;
+  }
+  if(t.dataset.stage!==undefined){ selectStage(+t.dataset.stage); return; }
+  if(t.dataset.lens){ state.lens=t.dataset.lens; updateTimeline(); return; }
+  if(t.dataset.vote!==undefined){
+    state.vote=+t.dataset.vote;
+    document.querySelectorAll(".vopt").forEach(b=>b.setAttribute("aria-pressed", +b.dataset.vote===state.vote));
+    $("voteOut").innerHTML = voteDiscussion(); return;
+  }
+});
+function selectStage(i){ state.sel=i; state.explored.add(i); updateTimeline(); }
+function restart(){
+  Object.assign(state,{idx:0, sel:null, lens:"all", explored:new Set(), choices:{}, vote:null, voteReveal:false, alt:0, paused:false, summary:false});
+  buildFlow(); render();
+}
+document.addEventListener("keydown", e=>{
+  if(e.target.matches("input,textarea,select")) return;
+  if(e.altKey||e.ctrlKey||e.metaKey) return;
+  if(state.summary) return;
+  const s = current();
+  if(e.key==="ArrowRight"){ if(!s.noNav){ e.preventDefault(); next(); } }
+  else if(e.key==="ArrowLeft"){ if(!s.noNav){ e.preventDefault(); prev(); } }
+  else if(s.id==="a4-timeline" && /^[1-9]$/.test(e.key)){ selectStage(+e.key-1); }
+});
+
+buildFlow(); render(false);
+</script>
+</body>
+</html>
