@@ -7,13 +7,14 @@ Students follow a fictional, composite case of financially motivated sextortion 
 >
 > **Support (Australia):** Lifeline **13 11 14** (24/7) · eSafety Commissioner, [esafety.gov.au](https://www.esafety.gov.au) (image-based abuse reporting)
 ---
-Learning goals
+**Learning goals**
 Follow an offence through Leclerc’s (2017) crime script stages: preparation → entry → pre-condition → instrumental precondition → instrumental initiation → actualisation → doing → post-condition → exit.
 Map situational crime prevention techniques (Cornish & Clarke, 2003) onto each stage: increase effort, increase risk, reduce rewards, reduce provocations, remove excuses.
 Play it
 Online: open the GitHub Pages link for this repository (see Publishing below).
 Offline: download `index.html` and open it in any modern browser (Chrome, Edge, Firefox or Safari). Nothing to install. Without an internet connection the fonts fall back to system fonts, and everything else works.
-Structure
+
+**Structure**
 Part	What happens
 Content warning	Support links, and a choice between playing and reading a text-only summary
 Introduction	The two learning goals
@@ -23,7 +24,8 @@ Act 3: The script	Six fast scenes from fake profile to escalating demands, with 
 Act 4: Rewind	The core of the game. An introduction to the five SCP techniques, an interactive nine-stage timeline of interventions tagged by actor and technique, a class vote, an alternative ending and evidence-based advice (don’t pay, report, block)
 Act 5: Debrief	Summary diagram (crime script × SCP × interventions), three portfolio reflection questions with a copy button, and references
 Solo play has 28 screens. Tutor mode adds 4 discussion pauses (32 screens).
-Presenting in class
+
+**Presenting in class**
 Tutor mode (toggle, top right): adds a discussion pause at the end of each act, a ‘Reveal all’ button on choice screens, a tutor prompt on each timeline stage and an open vote. It also turns off Act 3’s auto-advance.
 Keyboard: `→` and `←` move between screens. On the Act 4 timeline, keys `1` to `9` jump straight to a stage.
 Auto-play: in solo mode, Act 3 advances every 11 seconds and can be paused. It is off when the viewer has reduced motion turned on.
@@ -53,7 +55,8 @@ In this repository, go to Settings → Pages.
 Under Build and deployment, set Source to Deploy from a branch, choose main and / (root), then click Save.
 After a minute or two the site appears at `https://<username>.github.io/<repository-name>/`.
 To update the game, upload a new `index.html` with the same name. The site refreshes within a few minutes.
-References
+
+**References**
 Adeniran, A. I. (2008). The Internet and emergence of Yahooboys sub-culture in Nigeria. International Journal of Cyber Criminology, 2(2), 368.
 Bruce, M., Lusthaus, J., Kashyap, R., Phair, N., & Varese, F. (2024). Mapping the global geography of cybercrime with the World Cybercrime Index. PLOS ONE, 19(4), Article e0297312. https://doi.org/10.1371/journal.pone.0297312
 Cornish, D. B., & Clarke, R. V. (2003). Opportunities, precipitators and criminal decisions: A reply to Wortley’s critique of situational crime prevention. Crime Prevention Studies, 16, 41–96.
