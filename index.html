@@ -337,13 +337,13 @@ const REF = {
   thornNcmec: { inText:"(Thorn &amp; National Center for Missing &amp; Exploited Children, 2024)", inText2:"(Thorn &amp; National Center for Missing &amp; Exploited Children, 2024)",
     full:"Thorn &amp; National Center for Missing &amp; Exploited Children. (2024). <i>Trends in financial sextortion: An investigation of sextortion reports in NCMEC CyberTipline data</i>." },
   wolak: { inText:"(Wolak &amp; Finkelhor, 2016)",
-    full:"Wolak, J., &amp; Finkelhor, D. (2016). <i>Sextortion: Findings from a survey of 1,631 victims</i>. Crimes Against Children Research Center, University of New Hampshire." },
+    full:"Wolak, J., &amp; Finkelhor, D. (2016). <i>Sextortion: Findings from an online survey about threats to expose sexual images</i>. Crimes Against Children Research Center, University of New Hampshire. https://www.unh.edu/ccrc/" },
   thorn2025: { inText:"(Thorn, 2025)",
     full:"Thorn. (2025, June 24). <i>The state of sextortion in 2025</i>. https://www.thorn.org/blog/the-state-of-sextortion-in-2025/" },
   esafety: { inText:"(eSafety Commissioner, n.d.)",
     full:"eSafety Commissioner. (n.d.). <i>Deal with sextortion</i>. Retrieved October 14, 2026, from https://www.esafety.gov.au/key-topics/image-based-abuse/deal-with-sextortion" },
   scp: { inText:"(Cornish &amp; Clarke, 2003)",
-    full:"Cornish, D. B., &amp; Clarke, R. V. (2003). Opportunities, precipitators and criminal decisions: A reply to Wortley’s critique of situational crime prevention. <i>Crime Prevention Studies, 16</i>, 41–96." }
+    full:"Cornish, D. B., &amp; Clarke, R. V. (2003). Opportunities, precipitators and criminal decisions: A reply to Wortley’s critique of situational crime prevention. In M. J. Smith &amp; D. B. Cornish (Eds.), <i>Theory for practice in situational crime prevention</i> (Crime Prevention Studies, Vol. 16, pp. 111–124). Criminal Justice Press." }
 };
 /* reference list order: alphabetical (APA 7) */
 const REFS = ["adeniran","bruce","scp","esafety","leclerc","thorn2025","thornNcmec","wolak"].map(k=>REF[k].full);
@@ -356,7 +356,7 @@ const tags = (...t) => `<div class="tags">${t.map(x => {
   return `<span class="tag ${k}">${label || labels[k]}</span>`;
 }).join("")}</div>`;
 const stage = name => `<span class="tag stage">Script stage: ${name}</span>`;
-const cite = (...keys) => `<div class="cite">${keys.map(k=>{const r=REF[k]; return `<p><b>In-text:</b> ${ph(r.inText)} &nbsp; <b>Reference:</b> ${ph(r.full)}</p>`;}).join("")}</div>`;
+const cite = (...keys) => `<div class="cite">${keys.map(k=>{const r=REF[k]; return `<p><b>Reference:</b> ${ph(r.full)}</p>`;}).join("")}</div>`;
 
 /* =====================================================================
    ILLUSTRATION KIT: pastel isometric, Monument Valley + vaporwave
@@ -792,7 +792,7 @@ const SCENES = [
         ["3 · Peer learning","Kunle’s cousin shows them the ropes. Techniques pass between friends like trade skills, rather than being invented alone."],
         ["4 · Ready-made scripts","Message templates, fake profiles and how-to guides are <b>bought or shared online</b>. The crime arrives pre-written."]
        ])}
-       <div class="cite"><p>Narrative informed by research on the ‘Yahoo Boys’ subculture. <b>In-text:</b> ${REF.adeniran.inText} &nbsp; <b>Reference:</b> ${REF.adeniran.full}</p></div>
+       <div class="cite"><p>Narrative informed by research on the ‘Yahoo Boys’ subculture. <b>Reference:</b> ${REF.adeniran.full}</p></div>
      </div>
      <div class="art">${SVG.strain()}</div>
    </div>`},
